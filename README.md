@@ -2,6 +2,13 @@
 Architecture Patterns - simplified sample code
 
 ---
+## Goal of This
+Demontsrating these architecture paterns within working code in a very simplified way.
+This might help better understand them.
+
+On the other hand, with the help of this sample code, you will ***not*** see the complictions that come with a huge, complex project.
+
+---
 ## What You Need for This
  + Visual Studio 2019 - *or higher* - ***Run as Administrator*** - incl.:
     + C# stuff
@@ -15,3 +22,12 @@ Architecture Patterns - simplified sample code
 ---
 ## How This Was Created
 &rarr; [HowCreated.md](HowCreated.md)
+
+---
+## Architecture Patterns <br /> <small> *covered in this sample* </small>
+ + **D**omain **M**odel
+ + **I**nversion **o**f **C**ontrol / **D**ependency **I**njection
+ + Repository
+
+### See Also
+ + &rarr; [Inversion of Control Containers and the Dependency Injection pattern *(Fowler)*](https://martinfowler.com/articles/injection.html)

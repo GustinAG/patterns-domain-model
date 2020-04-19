@@ -4,6 +4,12 @@ using System.Linq;
 
 namespace DomainModel.Domain
 {
+    /// <summary>
+    /// Please make all inheritors immutable!
+    /// <para>
+    /// In ideal case, only the aggregate roots are public - whereas all other value objects are internal within the Domain Model.
+    /// </para>
+    /// </summary>
     public abstract class ValueObject : IEquatable<ValueObject>
     {
         protected abstract IList<object> EqualityComponents { get; }
