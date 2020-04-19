@@ -5,12 +5,13 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 
-namespace DomainModel.Domain.Tests.Checkout
+namespace DomainModel.Domain.Tests
 {
     [TestClass]
     public class OutCheckerUnitTests
     {
         private static readonly BarCode ValidBarCode = new BarCode("123");
+        private static readonly BarCode InvalidBarCode = new BarCode("000");
 
         [TestMethod]
         public void Start_ShouldRunWithoutException()
@@ -42,6 +43,18 @@ namespace DomainModel.Domain.Tests.Checkout
 
             // Act & Assert
             scanAction.Should().Throw<InvalidOperationException>("mustn't scan before checkout started");
+        }
+
+        [TestMethod]
+        public void Scan_ShouldThrowExceptionForInvalidBarCode()
+        {
+            // Arrange
+            var outChecker = CreateDefaultOutChecker();
+            Action scanAction = () => outChecker.Scan(InvalidBarCode);
+            outChecker.Start();
+
+            // Act & Assert
+            scanAction.Should().Throw<InvalidBarCodeException>("invalid bar code should be indicated");
         }
 
         [TestMethod]
@@ -146,7 +159,8 @@ namespace DomainModel.Domain.Tests.Checkout
         private static OutChecker CreateDefaultOutChecker()
         {
             var repository = Substitute.For<IProductRepository>();
-            repository.FindBy(ValidBarCode).Returns(new Product("unit-test-product", 0.98M));
+            repository.FindBy(ValidBarCode).Returns(new Product("unit-test-product", 0.89M));
+            repository.FindBy(InvalidBarCode).Returns(Product.NoProduct);
             return new OutChecker(repository);
         }
     }

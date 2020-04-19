@@ -35,6 +35,8 @@ namespace DomainModel.Domain.Checkout
         {
             Guard.Operation(_state == ProcessState.InProgress, $"You mustn't scan a bought product when checkout process {_state}");
             var product = FindProductBy(barCode);
+            if (product == Product.NoProduct) throw new InvalidBarCodeException(barCode);
+
             _bill = _bill.Add(product);
         }
 

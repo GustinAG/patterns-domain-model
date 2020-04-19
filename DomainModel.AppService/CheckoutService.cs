@@ -9,9 +9,9 @@ namespace DomainModel.AppService
         private readonly IResolver _resolver;
         private OutChecker _outChecker;
 
-        public CheckoutService(IResolver resolver)
+        public CheckoutService(IResolver resolver = null)
         {
-            _resolver = resolver;
+            _resolver = resolver ?? DefaultResolver.Create();
         }
 
         public void Start()

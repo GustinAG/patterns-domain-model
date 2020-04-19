@@ -12,12 +12,13 @@ namespace DomainModel.AppService.Tests
     {
         private const string TestProductName = "Test Product";
         private const string ValidCode = "1234";
+        private const string InvalidCode = "000";
 
         [TestMethod]
         public void Start_ShouldProduceEmptyBill()
         {
             // Arrange
-            var service = GetDefaultService();
+            var service = GetServiceWithMockedRepository();
 
             // Act
             service.Start();
@@ -29,10 +30,26 @@ namespace DomainModel.AppService.Tests
         }
 
         [TestMethod]
+        public void Scan_ShouldProduceNonEmptyBill()
+        {
+            // Arrange
+            var service = new CheckoutService();
+            service.Start();
+
+            // Act
+            service.Scan(ValidCode);
+
+            // Assert
+            var currentBill = service.GetCurrentBill();
+            Console.WriteLine(currentBill);
+            currentBill.Should().NotBeEquivalentTo(Bill.EmptyBill.PrintableText);
+        }
+
+        [TestMethod]
         public void Scan_ShouldProduceBillWithScannedProduct()
         {
             // Arrange
-            var service = GetDefaultService();
+            var service = GetServiceWithMockedRepository();
             service.Start();
 
             // Act
@@ -45,10 +62,40 @@ namespace DomainModel.AppService.Tests
         }
 
         [TestMethod]
+        public void Scan_ShouldProduceThreeLinesBill_WhenSameProductScanned()
+        {
+            // Arrange
+            var service = new CheckoutService();
+            service.Start();
+
+            // Act
+            service.Scan(ValidCode);
+            service.Scan(ValidCode);
+            service.Scan(ValidCode);
+
+            // Assert
+            var currentBill = service.GetCurrentBill();
+            Console.WriteLine(currentBill);
+            currentBill.Should().Contain(Environment.NewLine, Exactly.Twice());
+        }
+
+        [TestMethod]
+        public void Scan_ShouldThrowExceptionForInvalidBarCode()
+        {
+            // Arrange
+            var service = new CheckoutService();
+            Action scanAction = () => service.Scan(InvalidCode);
+            service.Start();
+
+            // Act & Assert
+            scanAction.Should().Throw<InvalidBarCodeException>();
+        }
+
+        [TestMethod]
         public void Scan_ShouldThrowException_WhenCheckoutProcessClosed()
         {
             // Arrange
-            var service = GetDefaultService();
+            var service = GetServiceWithMockedRepository();
             Action scanAction = () => service.Scan(ValidCode);
             service.Start();
             service.Close();
@@ -57,7 +104,7 @@ namespace DomainModel.AppService.Tests
             scanAction.Should().Throw<InvalidOperationException>();
         }
 
-        private static CheckoutService GetDefaultService()
+        private static CheckoutService GetServiceWithMockedRepository()
         {
             var resolver = new RegisteringResolver();
             var repository = Substitute.For<IProductRepository>();

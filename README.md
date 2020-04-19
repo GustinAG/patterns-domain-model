@@ -24,6 +24,10 @@ On the other hand, with the help of this sample code, you will ***not*** see the
 &rarr; [HowCreated.md](HowCreated.md)
 
 ---
+## Domain Model
+![DM](Domain.Model.png)
+
+---
 ## Architecture Patterns <br /> <small> *covered in this sample* </small>
  + **D**omain **M**odel
  + **I**nversion **o**f **C**ontrol / **D**ependency **I**njection
