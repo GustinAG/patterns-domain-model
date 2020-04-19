@@ -27,6 +27,11 @@ On the other hand, with the help of this sample code, you will ***not*** see the
 ## Domain Model
 ![DM](Domain.Model.png)
 
+### Imaginary Context Map
+*(Only **Product** bounded context has dample code here)*
+
+![Map](Context.Map.png)
+
 ---
 ## Architecture Patterns <br /> <small> *covered in this sample* </small>
  + **D**omain **M**odel

@@ -36,14 +36,14 @@ namespace DomainModel.Domain.Checkout
 
         protected override IList<object> EqualityComponents => new List<object> { _boughtProducts };
 
-        private string SummaryLine => ThreeColumnLine(string.Empty, "TOTAL      ", $"€ {_boughtProducts.TotalPrice}");
+        private string SummaryLine => ThreeColumnLine(string.Empty, "TOTAL      ", $"€ {_boughtProducts.TotalPrice:f2}");
 
         private static string PrintableProductLine(KeyValuePair<Product, int> productLine)
         {
             var count = productLine.Value;
             var product = productLine.Key;
             var unitPrice = product.Price;
-            return ThreeColumnLine(count, $"{product.Name} (unit price: € {unitPrice})", $"€ {count * unitPrice}");
+            return ThreeColumnLine(count, $"{product.Name} (unit price: € {unitPrice:f2})", $"€ {count * unitPrice:f2}");
         }
 
         private static string ThreeColumnLine(object a, object b, object c) => $"{a,2} {b,40} {c,8}";
