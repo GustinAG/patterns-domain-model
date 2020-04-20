@@ -1,4 +1,5 @@
 ﻿using Dawn;
+using DomainModel.Domain.Discounts;
 using DomainModel.Domain.Products;
 
 namespace DomainModel.Domain.Checkout
@@ -45,6 +46,7 @@ namespace DomainModel.Domain.Checkout
         public void Close()
         {
             Guard.Operation(_state == ProcessState.InProgress, $"You cannot close the checkout process when {_state}");
+            _bill = _bill.ApplyDiscounts(new Discounter(_repository));
             _state = ProcessState.Closed;
         }
 

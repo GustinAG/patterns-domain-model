@@ -1,4 +1,5 @@
-﻿using DomainModel.Domain.Products;
+﻿using System.Linq;
+using DomainModel.Domain.Products;
 
 namespace DomainModel.Repositories
 {
@@ -31,5 +32,7 @@ namespace DomainModel.Repositories
 
             return Products[code];
         }
+
+        public Product FindBy(string name) => Products.FirstOrDefault(p => p.Name == name) ?? Product.NoProduct;
     }
 }

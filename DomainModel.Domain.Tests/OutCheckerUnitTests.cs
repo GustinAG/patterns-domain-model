@@ -159,8 +159,11 @@ namespace DomainModel.Domain.Tests
         private static OutChecker CreateDefaultOutChecker()
         {
             var repository = Substitute.For<IProductRepository>();
+
             repository.FindBy(ValidBarCode).Returns(new Product("unit-test-product", 0.89M));
             repository.FindBy(InvalidBarCode).Returns(Product.NoProduct);
+            repository.FindBy(Arg.Any<string>()).Returns(Product.NoProduct);
+
             return new OutChecker(repository);
         }
     }

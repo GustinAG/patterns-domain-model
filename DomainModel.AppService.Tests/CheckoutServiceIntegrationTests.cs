@@ -108,7 +108,9 @@ namespace DomainModel.AppService.Tests
         {
             var resolver = new RegisteringResolver();
             var repository = Substitute.For<IProductRepository>();
+
             repository.FindBy(new BarCode(ValidCode)).Returns(new Product(TestProductName, 0.98M));
+            repository.FindBy(Arg.Any<string>()).Returns(Product.NoProduct);
             resolver.Register<IProductRepository>(() => repository);
 
             return new CheckoutService(resolver);

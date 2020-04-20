@@ -22,6 +22,12 @@ namespace DomainModel.Domain.Checkout
         internal decimal TotalPrice => _products.Sum(p => p.Price);
         internal IReadOnlyDictionary<Product, int> GroupedByProduct => _products.GroupBy(p => p).ToDictionary(p => p.Key, p => p.Count());
 
+        internal int CountOf(Product product)
+        {
+            var groups = GroupedByProduct;
+            return groups.ContainsKey(product) ? groups[product] : 0;
+        }
+
         internal BoughtProducts Add(Product product)
         {
             var products = _products.ToList();
