@@ -32,13 +32,26 @@ namespace DomainModel.Domain.Checkout
             _state = ProcessState.InProgress;
         }
 
-        public void Scan(BarCode barCode)
+        public string Scan(BarCode barCode)
         {
             Guard.Operation(_state == ProcessState.InProgress, $"You mustn't scan a bought product when checkout process {_state}");
             var product = FindProductBy(barCode);
             if (product == Product.NoProduct) throw new InvalidBarCodeException(barCode);
 
             _bill = _bill.Add(product);
+            return product.PrintDetailsOfProduct;
+        }
+
+        public string Storno(BarCode barCode)
+        {
+            Guard.Operation(_state == ProcessState.InProgress, $"You mustn't scan a bought product when checkout process {_state}");
+            var product = FindProductBy(barCode);
+            if (product == Product.NoProduct) throw new InvalidBarCodeException(barCode);
+            if (_bill.NumberOfProducts() == 0) throw new EmptyBillStornoCodeException();
+            if (_bill.NumberOfProducts(product) == 0) throw new NoProductBillStornoCodeException(barCode);
+
+            _bill = _bill.Remove(product);
+            return string.Format("Stored product details: {0}",product.PrintDetailsOfProduct);
         }
 
         public Bill ShowBill() => _bill;

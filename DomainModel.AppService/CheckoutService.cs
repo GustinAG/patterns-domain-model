@@ -1,5 +1,6 @@
 ﻿using Dawn;
 using DomainModel.Domain.Checkout;
+using DomainModel.Domain.Limiter;
 using DomainModel.Domain.Products;
 
 namespace DomainModel.AppService
@@ -8,6 +9,7 @@ namespace DomainModel.AppService
     {
         private readonly IResolver _resolver;
         private OutChecker _outChecker;
+        public CreditLimit CreditLimit { get; set; }
 
         public CheckoutService(IResolver resolver = null)
         {
@@ -21,11 +23,18 @@ namespace DomainModel.AppService
             _outChecker.Start();
         }
 
-        public void Scan(string code)
+        public string Scan(string code)
         {
             Guard.Operation(_outChecker != null);
             var barCode = new BarCode(code);
-            _outChecker.Scan(barCode);
+            return _outChecker.Scan(barCode);
+        }
+
+        public string Storno(string code)
+        {
+            Guard.Operation(_outChecker != null);
+            var barCode = new BarCode(code);
+            return _outChecker.Storno(barCode);
         }
 
         public void Close()
@@ -38,6 +47,12 @@ namespace DomainModel.AppService
         {
             Guard.Operation(_outChecker != null);
             return _outChecker.ShowBill().PrintableText;
+        }
+
+        public decimal GetCurrentBillValue()
+        {
+            Guard.Operation(_outChecker != null);
+            return _outChecker.ShowBill().SumPriceOfBoughtProducts;
         }
     }
 }

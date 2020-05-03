@@ -12,6 +12,8 @@ namespace DomainModel.Domain.Products
 
         public static Product NoProduct { get; } = new Product(string.Empty, decimal.MinusOne);
 
+        public string PrintDetailsOfProduct => string.Format("ProductName: {0}, price: {1}", Name, Price);
+
         public string Name { get; }
         public decimal Price { get; }
 

@@ -7,7 +7,9 @@ namespace DomainModel.Checkout.Terminal
     internal static class Program
     {
         private const string ExitCode = "c";
+        private const string SkipCode = "c"; 
         private const string ShowCode = "s";
+        private const string StornoCode = "r ";
 
         private static void Main()
         {
@@ -21,9 +23,31 @@ namespace DomainModel.Checkout.Terminal
 
             string code;
 
+            Console.Write($"Set checkput limit - or continue '{SkipCode}'");
+            code = Console.ReadLine();
+            if (code != ExitCode)
+            {
+                try
+                {
+                    var rawLimit = Decimal.Parse(code);
+                    service.CreditLimit = new Domain.Limiter.CreditLimit
+                    {
+                        CashLimit = rawLimit
+                    };
+                }
+                catch (FormatException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+                catch (OverflowException e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+
             do
             {
-                Console.Write($"Bar code - or '{ExitCode}' to close checkout / '{ShowCode}' to show bill so far: ");
+                Console.Write($"Bar code (use '{StornoCode}' at the front of barcode) - or '{ExitCode}' to close checkout / '{ShowCode}' to show bill so far: ");
                 code = Console.ReadLine();
                 if (code == ExitCode) continue;
 
@@ -36,7 +60,34 @@ namespace DomainModel.Checkout.Terminal
 
                 try
                 {
-                    service.Scan(code);
+                    if (code.StartsWith(StornoCode))
+                    {
+                        Console.WriteLine("Storno from:");
+                        Console.WriteLine(service.GetCurrentBill());
+                        var nakedBarCode = code.Substring(StornoCode.Length);
+                        Console.WriteLine(service.Storno(nakedBarCode));
+                        Console.WriteLine("To:");
+                        Console.WriteLine(service.GetCurrentBill());
+                    }
+                    else
+                    {
+                        Console.WriteLine(service.Scan(code));
+                    }
+
+                    if (service.CreditLimit != null)
+                    {
+                        var remind = service.CreditLimit.CashLimit - service.GetCurrentBillValue();
+                        if (remind <= 0)
+                        {
+                            Console.WriteLine("You reach the limit, that is waring, please close the bill... :)");
+                            Console.WriteLine(service.GetCurrentBill());
+                        }
+                        else
+                        {
+                            Console.WriteLine("Reminder rest of cache {0}", remind);
+                            //Console.WriteLine(service.GetCurrentBill());
+                        }
+                    }
                 }
                 catch (InvalidBarCodeException e)
                 {

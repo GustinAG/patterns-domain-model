@@ -24,6 +24,16 @@ namespace DomainModel.Domain.Checkout
         public static Bill NoBill { get; } = new Bill(BoughtProducts.Undefined, Discounter.NoAppliedDiscounts);
         public static Bill EmptyBill { get; } = new Bill(BoughtProducts.NoProducts, Discounter.NoAppliedDiscounts);
 
+        public decimal SumPriceOfBoughtProducts
+        {
+            get
+            {
+                return _boughtProducts.TotalPrice;
+            }
+        }
+
+        public int NumberOfProducts(Product product = null) => _boughtProducts.CountOf(product);
+
         public string PrintableText
         {
             get
@@ -40,6 +50,8 @@ namespace DomainModel.Domain.Checkout
         }
 
         internal Bill Add(Product product) => new Bill(_boughtProducts.Add(product), _appliedDiscounts);
+
+        internal Bill Remove(Product product) => new Bill(_boughtProducts.Remove(product), _appliedDiscounts);
 
         internal Bill ApplyDiscounts(Discounter discounter)
         {
