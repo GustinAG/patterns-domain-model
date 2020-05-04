@@ -43,4 +43,4 @@ On the other hand, with the help of this sample code, you will ***not*** see the
 
 ---
 ## TO-DO
- - [ ] [@GustinAG](https://github.com/GustinAG) https://github.com/GustinAG/patterns-domain-model/community
+ - [ ] **[@GustinAG](https://github.com/GustinAG)** [Community profile](https://github.com/GustinAG/patterns-domain-model/community) [Creating a default community health file](https://help.github.com/en/github/building-a-strong-community/creating-a-default-community-health-file)
