@@ -40,3 +40,7 @@ On the other hand, with the help of this sample code, you will ***not*** see the
 
 ### See Also
  + &rarr; [Inversion of Control Containers and the Dependency Injection pattern *(Fowler)*](https://martinfowler.com/articles/injection.html)
+
+---
+## TO-DO
+ - [ ] [@GustinAG](https://github.com/GustinAG) https://github.com/GustinAG/patterns-domain-model/community
