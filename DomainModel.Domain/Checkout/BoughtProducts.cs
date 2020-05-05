@@ -35,6 +35,8 @@ namespace DomainModel.Domain.Checkout
             return new BoughtProducts(products);
         }
 
+        internal Product LastScannedProduct => _products.Last();
+
         protected override IList<object> EqualityComponents => new List<object>(_products);
     }
 }

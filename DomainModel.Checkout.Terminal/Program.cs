@@ -37,6 +37,7 @@ namespace DomainModel.Checkout.Terminal
                 try
                 {
                     service.Scan(code);
+                    Console.WriteLine(service.GetLastScanned());
                 }
                 catch (InvalidBarCodeException e)
                 {

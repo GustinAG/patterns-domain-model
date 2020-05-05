@@ -39,5 +39,11 @@ namespace DomainModel.AppService
             Guard.Operation(_outChecker != null);
             return _outChecker.ShowBill().PrintableText;
         }
+
+        public string GetLastScanned()
+        {
+            Guard.Operation(_outChecker != null);
+            return _outChecker.ShowBill().PrintableLastScannedProductText;
+        }
     }
 }
