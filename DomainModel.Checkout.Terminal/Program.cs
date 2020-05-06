@@ -23,9 +23,9 @@ namespace DomainModel.Checkout.Terminal
 
             string code;
 
-            Console.Write($"Set checkput limit - or continue '{SkipCode}'");
+            Console.Write($"Set credit limit - or continue '{SkipCode}'");
             code = Console.ReadLine();
-            if (code != ExitCode)
+            if (code != SkipCode)
             {
                 try
                 {
@@ -74,20 +74,6 @@ namespace DomainModel.Checkout.Terminal
                         Console.WriteLine(service.Scan(code));
                     }
 
-                    if (service.CreditLimit != null)
-                    {
-                        var remind = service.CreditLimit.CashLimit - service.GetCurrentBillValue();
-                        if (remind <= 0)
-                        {
-                            Console.WriteLine("You reach the limit, that is waring, please close the bill... :)");
-                            Console.WriteLine(service.GetCurrentBill());
-                        }
-                        else
-                        {
-                            Console.WriteLine("Reminder rest of cache {0}", remind);
-                            //Console.WriteLine(service.GetCurrentBill());
-                        }
-                    }
                 }
                 catch (InvalidBarCodeException e)
                 {

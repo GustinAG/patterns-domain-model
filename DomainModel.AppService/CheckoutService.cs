@@ -27,14 +27,24 @@ namespace DomainModel.AppService
         {
             Guard.Operation(_outChecker != null);
             var barCode = new BarCode(code);
-            return _outChecker.Scan(barCode);
+            var ret = _outChecker.Scan(barCode);
+            if (CreditLimit != null && CreditLimit.CashLimit > decimal.Zero)
+            {
+                ret += CreditLimit.GetStringInCaseOfCashLimit(_outChecker);
+            }
+            return ret;
         }
 
         public string Storno(string code)
         {
             Guard.Operation(_outChecker != null);
             var barCode = new BarCode(code);
-            return _outChecker.Storno(barCode);
+            var ret = _outChecker.Storno(barCode);
+            if (CreditLimit != null && CreditLimit.CashLimit > decimal.Zero)
+            {
+                ret += CreditLimit.GetStringInCaseOfCashLimit(_outChecker);
+            }
+            return ret;
         }
 
         public void Close()
