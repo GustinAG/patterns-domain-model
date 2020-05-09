@@ -55,6 +55,12 @@ namespace DomainModel.Domain.Checkout
             var bill = new Bill(_boughtProducts.Add(product), _appliedDiscounts);
             return bill;
         }
+        
+        internal Bill CancelLast(Product product)
+        {
+            var bill = new Bill(_boughtProducts.RemoveLast(product), _appliedDiscounts);
+            return bill;
+        }
 
         internal Bill ApplyDiscounts(Discounter discounter)
         {
