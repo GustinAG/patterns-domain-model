@@ -47,7 +47,7 @@ namespace DomainModel.Domain.Checkout
             var product = FindProductBy(barCode);
             if (product == Product.NoProduct) throw new InvalidBarCodeException(barCode);
 
-            _bill = _bill.CancelLast(product);
+            _bill = _bill.CancelOne(product);
         }
 
         public Bill ShowBill() => _bill;

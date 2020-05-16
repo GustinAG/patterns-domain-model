@@ -60,26 +60,27 @@ namespace DomainModel.Domain.Tests
         }
 
         [TestMethod]
-        public void CancelLast_ThrowsBoughtProductNotFoundExceptionIfDoesntHaveProduct()
+        public void CancelOne_ThrowsBoughtProductNotFoundExceptionIfDoesntHaveProduct()
         {
             // Arrange
             var bill = Bill.EmptyBill;
             var ProductKorte = CreateProductPear();
-            Action cancelAction = () => bill.CancelLast(ProductKorte);
+            Action cancelAction = () => bill.CancelOne(ProductKorte);
 
             // Act & Assert
             cancelAction.Should().Throw<BoughtProductNotFoundException>();
         }
 
         [TestMethod]
-        public void CancelLast_RemovesItemIfOnTheBill()
+        public void CancelOne_RemovesItemIfOnTheBill()
         {
             // Arrange
             var expectations = CreateBillFromProducts(
                 CreateProductApple(),
-                CreateProductPear(),
                 CreateProductWalnut(),
-                CreateProductApple());
+                CreateProductPear(),
+                CreateProductApple()
+            );
 
             var reality = CreateBillFromProducts(
                 CreateProductApple(),
@@ -89,7 +90,7 @@ namespace DomainModel.Domain.Tests
                 CreateProductApple());
 
             // Act
-            reality = reality.CancelLast(CreateProductPear());
+            reality = reality.CancelOne(CreateProductPear());
 
             // Assert
             reality.Should().Be(expectations);

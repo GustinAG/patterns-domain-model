@@ -52,9 +52,9 @@ namespace DomainModel.Domain.Checkout
 
         internal Bill Add(Product product) => new Bill(_boughtProducts.Add(product), _appliedDiscounts);
         
-        internal Bill CancelLast(Product product)
+        internal Bill CancelOne(Product product)
         {
-            var bill = new Bill(_boughtProducts.RemoveLast(product), _appliedDiscounts);
+            var bill = new Bill(_boughtProducts.RemoveOne(product), _appliedDiscounts);
             return bill;
         }
 
