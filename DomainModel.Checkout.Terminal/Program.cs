@@ -44,7 +44,7 @@ namespace DomainModel.Checkout.Terminal
                     }
 
                     Service.Scan(code);
-                    Console.WriteLine(Service.GetLastScanned());
+                    Console.WriteLine(Service.GetLastAdded());
                 }
                 catch (Exception e)
                     when (e is InvalidBarCodeException || e is BoughtProductNotFoundException)

@@ -39,22 +39,18 @@ namespace DomainModel.Domain.Checkout
             }
         }
 
-        public string PrintableLastScannedProductText
+        public string PrintableLastAddedProductText
         {
             get
             {
                 if (_boughtProducts == BoughtProducts.Undefined) return NoBillText;
                 if (_boughtProducts == BoughtProducts.NoProducts) return EmptyBillText;
 
-                return LastScannedLine(_boughtProducts.LastScannedProduct);
+                return LastAddedLine(_boughtProducts.LastAddedProduct);
             }
         }
 
-        internal Bill Add(Product product)
-        {
-            var bill = new Bill(_boughtProducts.Add(product), _appliedDiscounts);
-            return bill;
-        }
+        internal Bill Add(Product product) => new Bill(_boughtProducts.Add(product), _appliedDiscounts);
         
         internal Bill CancelLast(Product product)
         {
@@ -71,7 +67,7 @@ namespace DomainModel.Domain.Checkout
         protected override IList<object> EqualityComponents => new List<object> { _boughtProducts };
 
         private string SummaryLine => ThreeColumnLine(string.Empty, "TOTAL      ", $"€ {_boughtProducts.TotalPrice:f2}");
-        private string LastScannedLine(Product product) => ThreeColumnLine(product.Name, $"€ {product.Price:f2}", $"€ {_boughtProducts.TotalPrice:f2}");
+        private string LastAddedLine(Product product) => ThreeColumnLine(product.Name, $"€ {product.Price:f2}", $"€ {_boughtProducts.TotalPrice:f2}");
 
         private static string PrintableProductLine(KeyValuePair<Product, int> productLine)
         {

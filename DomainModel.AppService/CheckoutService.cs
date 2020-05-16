@@ -47,10 +47,10 @@ namespace DomainModel.AppService
             return _outChecker.ShowBill().PrintableText;
         }
 
-        public string GetLastScanned()
+        public string GetLastAdded()
         {
             Guard.Operation(_outChecker != null);
-            return _outChecker.ShowBill().PrintableLastScannedProductText;
+            return _outChecker.ShowBill().PrintableLastAddedProductText;
         }
     }
 }

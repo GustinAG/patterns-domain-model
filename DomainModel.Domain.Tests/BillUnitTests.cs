@@ -11,42 +11,38 @@ namespace DomainModel.Domain.Tests
     [TestClass]
     public class BillUnitTests
     {
-        private static Func<Product> CreateProductPear = () => new Product("körte", 0.2M);
-        private static Func<Product> CreateProductApple = () => new Product("alma", 0.3M);
-        private static Func<Product> CreateProductWalnut = () => new Product("dió", 0.4M);
-
         private static readonly BarCode ValidBarCode = new BarCode("123");
         private const string NoBillText = "No bill available!";
         private const string EmptyBillText = "Empty bill - nothing bought.";
 
         [TestMethod]
-        public void PrintableLastScannedProductText_ReturnsNoBillTextIfNoBillExists()
+        public void PrintableLastAddedProductText_ReturnsNoBillTextIfNoBillExists()
         {
             // Arrange
             var bill = Bill.NoBill;
 
             // Act
-            var print = bill.PrintableLastScannedProductText;
+            var text = bill.PrintableLastAddedProductText;
 
             // Assert
-            Assert.AreEqual(NoBillText, print);
+            text.Should().Be(NoBillText);
         }
 
         [TestMethod]
-        public void PrintableLastScannedProductText_ReturnsEmptyBillTextIfNoBillExists()
+        public void PrintableLastAddedProductText_ReturnsEmptyBillTextIfNoBillExists()
         {
             // Arrange
             var bill = Bill.EmptyBill;
 
             // Act
-            var print = bill.PrintableLastScannedProductText;
+            var text = bill.PrintableLastAddedProductText;
 
             // Assert
-            Assert.AreEqual(EmptyBillText, print);
+            text.Should().Be(EmptyBillText);
         }
 
         [TestMethod]
-        public void PrintableLastScannedProductText_ReturnsLastScannedProductsTextWhenProductsExists()
+        public void PrintableLastAddedProductText_ReturnsLastAddedProductsTextWhenProductsExists()
         {
             // Arrange
             var bill = Bill.EmptyBill;
@@ -55,11 +51,12 @@ namespace DomainModel.Domain.Tests
             bill = bill.Add(CreateProductApple());
             bill = bill.Add(CreateProductWalnut());
             bill = bill.Add(CreateProductPear());
-            var print = bill.PrintableLastScannedProductText;
+            var text = bill.PrintableLastAddedProductText;
 
             // Assert
-            var expectation = "körte                                   € 0,20   € 0,90";
-            Assert.AreEqual(expectation, print);
+            text.Should().Contain("pear");
+            text.Should().Contain("€ 0,20");
+            text.Should().Contain("€ 0,90");
         }
 
         [TestMethod]
@@ -95,8 +92,12 @@ namespace DomainModel.Domain.Tests
             reality = reality.CancelLast(CreateProductPear());
 
             // Assert
-            Assert.AreEqual(expectations, reality);
+            reality.Should().Be(expectations);
         }
+
+        private static Product CreateProductPear() => new Product("pear", 0.2M);
+        private static Product CreateProductApple() => new Product("apple", 0.3M);
+        private static Product  CreateProductWalnut() => new Product("walnut", 0.4M);
 
         private static Bill CreateBillFromProducts(params Product[] products)
         {
