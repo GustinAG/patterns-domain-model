@@ -35,6 +35,20 @@ namespace DomainModel.Domain.Checkout
             return new BoughtProducts(products);
         }
 
+        internal BoughtProducts RemoveOne(Product product)
+        {
+            var products = _products.ToList();
+            int index = products.IndexOf(product);
+            if (index < 0)
+            {
+                throw new BoughtProductNotFoundException(product);
+            }
+            products.RemoveAt(index);
+            return new BoughtProducts(products);
+        }
+
+        internal Product LastAddedProduct => _products.Last();
+
         protected override IList<object> EqualityComponents => new List<object>(_products);
     }
 }

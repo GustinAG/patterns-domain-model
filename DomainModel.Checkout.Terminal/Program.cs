@@ -8,6 +8,8 @@ namespace DomainModel.Checkout.Terminal
     {
         private const string ExitCode = "c";
         private const string ShowCode = "s";
+        private const string CancelCode = "r";
+        private static CheckoutService Service;
 
         private static void Main()
         {
@@ -16,38 +18,59 @@ namespace DomainModel.Checkout.Terminal
             Console.WriteLine("Press any key to start checkout process!");
             Console.ReadKey(true);
 
-            var service = new CheckoutService();
-            service.Start();
+            Service = new CheckoutService();
+            Service.Start();
 
             string code;
 
             do
             {
-                Console.Write($"Bar code - or '{ExitCode}' to close checkout / '{ShowCode}' to show bill so far: ");
+                Console.Write($"Bar code - or '{ExitCode}' to close checkout / '{ShowCode}' to show bill so far / '{CancelCode} to cancel one item': ");
                 code = Console.ReadLine();
                 if (code == ExitCode) continue;
 
                 if (code == ShowCode)
                 {
-                    Console.WriteLine("Partial bill so far:");
-                    Console.WriteLine(service.GetCurrentBill());
+                    ShowPartialBill();
                     continue;
                 }
 
                 try
                 {
-                    service.Scan(code);
+                    if (code == CancelCode)
+                    {
+                        CancelItem();
+                        continue;
+                    }
+
+                    Service.Scan(code);
+                    Console.WriteLine(Service.GetLastAdded());
                 }
-                catch (InvalidBarCodeException e)
+                catch (Exception e)
+                    when (e is InvalidBarCodeException || e is BoughtProductNotFoundException)
                 {
                     Console.WriteLine(e.Message);
                 }
             } while (code != ExitCode);
 
-            service.Close();
+            Service.Close();
 
             Console.WriteLine($"{Environment.NewLine}BILL:");
-            Console.WriteLine(service.GetCurrentBill());
+            Console.WriteLine(Service.GetCurrentBill());
+        }
+
+        private static void ShowPartialBill()
+        {
+            Console.WriteLine("Partial bill so far:");
+            Console.WriteLine(Service.GetCurrentBill());
+        }
+
+        private static void CancelItem()
+        {
+            Console.Write("Bar code to cancel: ");
+            string code = Console.ReadLine();
+            Service.Cancel(code);
+            ShowPartialBill();
         }
     }
 }

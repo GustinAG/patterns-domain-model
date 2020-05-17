@@ -8,4 +8,9 @@
     <PackageReference Include="Dawn.Guard" Version="1.12.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+    <_Parameter1>DomainModel.Domain.Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 </Project>

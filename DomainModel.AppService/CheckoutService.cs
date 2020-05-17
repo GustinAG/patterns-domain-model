@@ -28,6 +28,13 @@ namespace DomainModel.AppService
             _outChecker.Scan(barCode);
         }
 
+        public void Cancel(string code)
+        {
+            Guard.Operation(_outChecker != null);
+            var barCode = new BarCode(code);
+            _outChecker.Cancel(barCode);
+        }
+
         public void Close()
         {
             Guard.Operation(_outChecker != null);
@@ -38,6 +45,12 @@ namespace DomainModel.AppService
         {
             Guard.Operation(_outChecker != null);
             return _outChecker.ShowBill().PrintableText;
+        }
+
+        public string GetLastAdded()
+        {
+            Guard.Operation(_outChecker != null);
+            return _outChecker.ShowBill().PrintableLastAddedProductText;
         }
     }
 }

@@ -39,7 +39,24 @@ namespace DomainModel.Domain.Checkout
             }
         }
 
+        public string PrintableLastAddedProductText
+        {
+            get
+            {
+                if (_boughtProducts == BoughtProducts.Undefined) return NoBillText;
+                if (_boughtProducts == BoughtProducts.NoProducts) return EmptyBillText;
+
+                return LastAddedLine(_boughtProducts.LastAddedProduct);
+            }
+        }
+
         internal Bill Add(Product product) => new Bill(_boughtProducts.Add(product), _appliedDiscounts);
+        
+        internal Bill CancelOne(Product product)
+        {
+            var bill = new Bill(_boughtProducts.RemoveOne(product), _appliedDiscounts);
+            return bill;
+        }
 
         internal Bill ApplyDiscounts(Discounter discounter)
         {
@@ -50,6 +67,7 @@ namespace DomainModel.Domain.Checkout
         protected override IList<object> EqualityComponents => new List<object> { _boughtProducts };
 
         private string SummaryLine => ThreeColumnLine(string.Empty, "TOTAL      ", $"€ {_boughtProducts.TotalPrice:f2}");
+        private string LastAddedLine(Product product) => ThreeColumnLine(product.Name, $"€ {product.Price:f2}", $"€ {_boughtProducts.TotalPrice:f2}");
 
         private static string PrintableProductLine(KeyValuePair<Product, int> productLine)
         {

@@ -41,6 +41,15 @@ namespace DomainModel.Domain.Checkout
             _bill = _bill.Add(product);
         }
 
+        public void Cancel(BarCode barCode)
+        {
+            Guard.Operation(_state == ProcessState.InProgress, $"You can only cancel items when checkout process {ProcessState.InProgress}");
+            var product = FindProductBy(barCode);
+            if (product == Product.NoProduct) throw new InvalidBarCodeException(barCode);
+
+            _bill = _bill.CancelOne(product);
+        }
+
         public Bill ShowBill() => _bill;
 
         public void Close()
