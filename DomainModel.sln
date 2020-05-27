@@ -9,6 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainModel.Domain.Tests", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BEED6B9D-433B-4527-A881-7D0483731CC0}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		Context.Map.png = Context.Map.png
 		Domain.Model.png = Domain.Model.png
 		HowCreated.md = HowCreated.md
@@ -35,7 +36,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainModel.Repositories.Te
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Presentation", "1 - Presentation", "{0AAF6CCF-FD7D-45DE-8EF7-2BF829B04BBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainModel.Checkout.Terminal", "DomainModel.Checkout.Terminal\DomainModel.Checkout.Terminal.csproj", "{C86B77B4-B9ED-4949-A146-C1D415A1DA05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DomainModel.Checkout.Terminal", "DomainModel.Checkout.Terminal\DomainModel.Checkout.Terminal.csproj", "{C86B77B4-B9ED-4949-A146-C1D415A1DA05}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

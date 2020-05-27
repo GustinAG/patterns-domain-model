@@ -1,22 +1,20 @@
 using System;
+using System.Linq;
 using DomainModel.Domain.Checkout;
-using DomainModel.Domain.Discounts;
 using DomainModel.Domain.Products;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NSubstitute;
 
 namespace DomainModel.Domain.Tests
 {
     [TestClass]
     public class BillUnitTests
     {
-        private static readonly BarCode ValidBarCode = new BarCode("123");
         private const string NoBillText = "No bill available!";
         private const string EmptyBillText = "Empty bill - nothing bought.";
 
         [TestMethod]
-        public void PrintableLastAddedProductText_ReturnsNoBillTextIfNoBillExists()
+        public void PrintableLastAddedProductText_ShouldReturnNoBillText_WhenNoBillExists()
         {
             // Arrange
             var bill = Bill.NoBill;
@@ -29,7 +27,7 @@ namespace DomainModel.Domain.Tests
         }
 
         [TestMethod]
-        public void PrintableLastAddedProductText_ReturnsEmptyBillTextIfNoBillExists()
+        public void PrintableLastAddedProductText_ShouldReturnEmptyBillText_WhenNoProductOnBillYet()
         {
             // Arrange
             var bill = Bill.EmptyBill;
@@ -42,37 +40,37 @@ namespace DomainModel.Domain.Tests
         }
 
         [TestMethod]
-        public void PrintableLastAddedProductText_ReturnsLastAddedProductsTextWhenProductsExists()
+        public void PrintableLastAddedProductText_ShouldReturnLastAddedProductDetails()
         {
             // Arrange
             var bill = Bill.EmptyBill;
-
-            // Act
             bill = bill.Add(CreateProductApple());
             bill = bill.Add(CreateProductWalnut());
             bill = bill.Add(CreateProductPear());
+
+            // Act
             var text = bill.PrintableLastAddedProductText;
 
             // Assert
             text.Should().Contain("pear");
-            text.Should().Contain("€ 0,20");
-            text.Should().Contain("€ 0,90");
+            text.Should().Contain("€ 0.20");
+            text.Should().Contain("€ 0.90");
         }
 
         [TestMethod]
-        public void CancelOne_ThrowsBoughtProductNotFoundExceptionIfDoesntHaveProduct()
+        public void CancelOne_ShouldThrowBoughtProductNotFoundException_WhenProductNotOnBill()
         {
             // Arrange
             var bill = Bill.EmptyBill;
-            var ProductKorte = CreateProductPear();
-            Action cancelAction = () => bill.CancelOne(ProductKorte);
+            var productPear = CreateProductPear();
+            Action cancelAction = () => bill.CancelOne(productPear);
 
             // Act & Assert
             cancelAction.Should().Throw<BoughtProductNotFoundException>();
         }
 
         [TestMethod]
-        public void CancelOne_RemovesItemIfOnTheBill()
+        public void CancelOne_ShouldRemoveOneProductFromBill()
         {
             // Arrange
             var expectations = CreateBillFromProducts(
@@ -98,17 +96,8 @@ namespace DomainModel.Domain.Tests
 
         private static Product CreateProductPear() => new Product("pear", 0.2M);
         private static Product CreateProductApple() => new Product("apple", 0.3M);
-        private static Product  CreateProductWalnut() => new Product("walnut", 0.4M);
+        private static Product CreateProductWalnut() => new Product("walnut", 0.4M);
 
-        private static Bill CreateBillFromProducts(params Product[] products)
-        {
-            var bill = Bill.EmptyBill;
-            foreach (var product in products)
-            {
-                bill = bill.Add(product);
-            }
-
-            return bill;
-        }
+        private static Bill CreateBillFromProducts(params Product[] products) => products.Aggregate(Bill.EmptyBill, (b, p) => b.Add(p));
     }
 }
