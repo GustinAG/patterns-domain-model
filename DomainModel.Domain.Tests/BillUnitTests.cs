@@ -139,7 +139,7 @@ namespace DomainModel.Domain.Tests
         private static Product CreateProductApple() => new Product("apple", ApplePrice);
         private static Product CreateProductWalnut() => new Product("walnut", WalnutPrice);
 
-        private static Bill CreateBillFromProducts(params Product[] products) => products.Aggregate(Bill.EmptyBill, (b, p) => b.Add(p));
+        private static Bill CreateBillFromProducts(params Product[] products) => products.Aggregate(Bill.EmptyBill, (b, p) => b.AddOne(p));
 
         private static string LastLineOf(string text) => text.Split(Environment.NewLine).Last();
 

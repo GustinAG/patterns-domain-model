@@ -32,15 +32,22 @@ namespace DomainModel.Domain.Checkout
             _state = ProcessState.InProgress;
         }
 
+        /// <summary>
+        /// Scans the bar code of a product.
+        /// </summary>
         public void Scan(BarCode barCode)
         {
             Guard.Operation(_state == ProcessState.InProgress, $"You mustn't scan a bought product when checkout process {_state}");
             var product = FindProductBy(barCode);
             if (product == Product.NoProduct) throw new InvalidBarCodeException(barCode);
 
-            _bill = _bill.Add(product);
+            _bill = _bill.AddOne(product);
         }
 
+        /// <summary>
+        /// Cancels an already scanned product.
+        /// </summary>
+        /// <remarks>HU: "sztornóz".</remarks>
         public void Cancel(BarCode barCode)
         {
             Guard.Operation(_state == ProcessState.InProgress, $"You can only cancel items when checkout process {ProcessState.InProgress}");

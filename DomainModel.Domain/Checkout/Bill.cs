@@ -51,7 +51,7 @@ namespace DomainModel.Domain.Checkout
             }
         }
 
-        internal Bill Add(Product product) => new Bill(_boughtProducts.Add(product), _appliedDiscounts);
+        internal Bill AddOne(Product product) => new Bill(_boughtProducts.AddOne(product), _appliedDiscounts);
 
         internal Bill CancelOne(Product product) => new Bill(_boughtProducts.RemoveOne(product), _appliedDiscounts);
 
