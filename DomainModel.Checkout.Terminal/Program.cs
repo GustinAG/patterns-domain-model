@@ -9,7 +9,7 @@ namespace DomainModel.Checkout.Terminal
         private const string ExitCode = "c";
         private const string ShowCode = "s";
         private const string CancelCode = "r";
-        private static CheckoutService Service;
+        private static CheckoutService _service;
 
         private static void Main()
         {
@@ -18,8 +18,8 @@ namespace DomainModel.Checkout.Terminal
             Console.WriteLine("Press any key to start checkout process!");
             Console.ReadKey(true);
 
-            Service = new CheckoutService();
-            Service.Start();
+            _service = new CheckoutService();
+            _service.Start();
 
             string code;
 
@@ -43,8 +43,8 @@ namespace DomainModel.Checkout.Terminal
                         continue;
                     }
 
-                    Service.Scan(code);
-                    Console.WriteLine(Service.GetLastAdded());
+                    _service.Scan(code);
+                    Console.WriteLine(_service.GetLastAdded());
                 }
                 catch (Exception e)
                     when (e is InvalidBarCodeException || e is BoughtProductNotFoundException)
@@ -53,23 +53,23 @@ namespace DomainModel.Checkout.Terminal
                 }
             } while (code != ExitCode);
 
-            Service.Close();
+            _service.Close();
 
             Console.WriteLine($"{Environment.NewLine}BILL:");
-            Console.WriteLine(Service.GetCurrentBill());
+            Console.WriteLine(_service.GetCurrentBill());
         }
 
         private static void ShowPartialBill()
         {
             Console.WriteLine("Partial bill so far:");
-            Console.WriteLine(Service.GetCurrentBill());
+            Console.WriteLine(_service.GetCurrentBill());
         }
 
         private static void CancelItem()
         {
             Console.Write("Bar code to cancel: ");
             string code = Console.ReadLine();
-            Service.Cancel(code);
+            _service.Cancel(code);
             ShowPartialBill();
         }
     }

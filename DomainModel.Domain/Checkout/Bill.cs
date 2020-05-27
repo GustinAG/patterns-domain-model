@@ -53,11 +53,7 @@ namespace DomainModel.Domain.Checkout
 
         internal Bill Add(Product product) => new Bill(_boughtProducts.Add(product), _appliedDiscounts);
 
-        internal Bill CancelOne(Product product)
-        {
-            var bill = new Bill(_boughtProducts.RemoveOne(product), _appliedDiscounts);
-            return bill;
-        }
+        internal Bill CancelOne(Product product) => new Bill(_boughtProducts.RemoveOne(product), _appliedDiscounts);
 
         internal Bill ApplyDiscounts(Discounter discounter)
         {
@@ -67,7 +63,16 @@ namespace DomainModel.Domain.Checkout
 
         protected override IList<object> EqualityComponents => new List<object> { _boughtProducts };
 
-        private string SummaryLine => ThreeColumnLine(string.Empty, "TOTAL      ", Invariant($"€ {_boughtProducts.TotalPrice:f2}"));
+        private string SummaryLine
+        {
+            get
+            {
+                var discountsTotalPrice = _appliedDiscounts.Sum(d => d.SubTotal);
+                var totalPrice = _boughtProducts.TotalPrice + discountsTotalPrice;
+                return ThreeColumnLine(string.Empty, "TOTAL      ", Invariant($"€ {totalPrice:f2}"));
+            }
+        }
+
         private string LastAddedLine(Product product) => ThreeColumnLine(product.Name, Invariant($"€ {product.Price:f2}"), Invariant($"€ {_boughtProducts.TotalPrice:f2}"));
 
         private static string PrintableProductLine(KeyValuePair<Product, int> productLine)
