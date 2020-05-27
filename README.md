@@ -1,4 +1,6 @@
-# patterns-domain-model  <img src="under-construction.png" alt="under-construction" width="100" align="right" />
+![.NET Core](https://github.com/GustinAG/patterns-domain-model/workflows/.NET%20Core/badge.svg)
+
+# patterns-domain-model
 Architecture Patterns - simplified sample code
 
 ---
