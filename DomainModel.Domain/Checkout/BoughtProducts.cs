@@ -28,7 +28,7 @@ namespace DomainModel.Domain.Checkout
             return groups.ContainsKey(product) ? groups[product] : 0;
         }
 
-        internal BoughtProducts Add(Product product)
+        internal BoughtProducts AddOne(Product product)
         {
             var products = _products.ToList();
             products.Add(product);
@@ -38,12 +38,9 @@ namespace DomainModel.Domain.Checkout
         internal BoughtProducts RemoveOne(Product product)
         {
             var products = _products.ToList();
-            int index = products.IndexOf(product);
-            if (index < 0)
-            {
-                throw new BoughtProductNotFoundException(product);
-            }
-            products.RemoveAt(index);
+            bool foundAndRemoved = products.Remove(product);
+            if (!foundAndRemoved) throw new BoughtProductNotFoundException(product);
+
             return new BoughtProducts(products);
         }
 

@@ -1,4 +1,6 @@
-# patterns-domain-model  <img src="under-construction.png" alt="under-construction" width="100" align="right" />
+![.NET Core](https://github.com/GustinAG/patterns-domain-model/workflows/.NET%20Core/badge.svg)
+
+# patterns-domain-model
 Architecture Patterns - simplified sample code
 
 ---
@@ -40,3 +42,7 @@ On the other hand, with the help of this sample code, you will ***not*** see the
 
 ### See Also
  + &rarr; [Inversion of Control Containers and the Dependency Injection pattern *(Fowler)*](https://martinfowler.com/articles/injection.html)
+
+---
+## TO-DO
+ - [ ] **[@GustinAG](https://github.com/GustinAG)** [Community profile](https://github.com/GustinAG/patterns-domain-model/community) [Creating a default community health file](https://help.github.com/en/github/building-a-strong-community/creating-a-default-community-health-file)

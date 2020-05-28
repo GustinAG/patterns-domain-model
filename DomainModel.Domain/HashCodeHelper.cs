@@ -1,21 +1,20 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Dawn;
 
 namespace DomainModel.Domain
 {
     public static class HashCodeHelper
     {
+        [SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "Guard validates it here.")]
         public static int CombineHashCodes(IList<object> objects)
         {
             Guard.Argument(objects, nameof(objects)).NotNull();
 
             unchecked
             {
-                var hash = 17;
-
-                foreach (var obj in objects) hash = hash * 23 + (obj?.GetHashCode() ?? 0);
-
-                return hash;
+                return objects.Aggregate(17, (h, o) => h * 23 + (o?.GetHashCode() ?? 0));
             }
         }
     }

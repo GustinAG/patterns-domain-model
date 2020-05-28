@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using DomainModel.Domain.Checkout;
 using DomainModel.Domain.Products;
@@ -9,7 +10,7 @@ namespace DomainModel.Domain.Discounts
     {
         private readonly IReadOnlyList<IDiscountStrategy> _discounts;
 
-        internal static IReadOnlyList<AppliedDiscount> NoAppliedDiscounts { get; } = new AppliedDiscount[] { };
+        internal static IReadOnlyList<AppliedDiscount> NoAppliedDiscounts { get; } = Array.Empty<AppliedDiscount>();
 
         internal Discounter(IProductRepository repository)
         {

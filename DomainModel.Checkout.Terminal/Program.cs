@@ -10,7 +10,7 @@ namespace DomainModel.Checkout.Terminal
         private const string ShowCode = "s";
         private const string CancelCode = "r";
         private const string LimitCode = "l";
-        private static CheckoutService Service;
+        private static CheckoutService _service;
 
         private static void Main()
         {
@@ -19,8 +19,8 @@ namespace DomainModel.Checkout.Terminal
             Console.WriteLine("Press any key to start checkout process!");
             Console.ReadKey(true);
 
-            Service = new CheckoutService();
-            Service.Start(RenderLimitExceededText);
+            _service = new CheckoutService();
+            _service.Start(RenderLimitExceededText);
 
             string code;
 
@@ -50,8 +50,8 @@ namespace DomainModel.Checkout.Terminal
                         continue;
                     }
 
-                    Service.Scan(code);
-                    Console.WriteLine(Service.GetLastAdded());
+                    _service.Scan(code);
+                    Console.WriteLine(_service.GetLastAdded());
                 }
                 catch (Exception e)
                     when (e is InvalidBarCodeException || e is BoughtProductNotFoundException)
@@ -60,10 +60,10 @@ namespace DomainModel.Checkout.Terminal
                 }
             } while (code != ExitCode);
 
-            Service.Close();
+            _service.Close();
 
             Console.WriteLine($"{Environment.NewLine}BILL:");
-            Console.WriteLine(Service.GetCurrentBill());
+            Console.WriteLine(_service.GetCurrentBill());
         }
 
         private static void RenderLimitExceededText(decimal limit, decimal currentPrice)
@@ -74,20 +74,20 @@ namespace DomainModel.Checkout.Terminal
         private static void SetUpPriceLimit()
         {
             var limit = ReadDecimalFromKeybard("Please enter price limit (0 for no limit): ");
-            Service.SetUpLimit(limit);
+            _service.SetUpLimit(limit);
         }
 
         private static void ShowPartialBill()
         {
             Console.WriteLine("Partial bill so far:");
-            Console.WriteLine(Service.GetCurrentBill());
+            Console.WriteLine(_service.GetCurrentBill());
         }
 
         private static void CancelItem()
         {
             Console.Write("Bar code to cancel: ");
             string code = Console.ReadLine();
-            Service.Cancel(code);
+            _service.Cancel(code);
             ShowPartialBill();
         }
 

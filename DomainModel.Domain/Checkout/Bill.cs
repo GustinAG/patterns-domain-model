@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DomainModel.Domain.Discounts;
 using DomainModel.Domain.Products;
+using static System.FormattableString;
 
 namespace DomainModel.Domain.Checkout
 {
@@ -50,13 +51,9 @@ namespace DomainModel.Domain.Checkout
             }
         }
 
-        internal Bill Add(Product product) => new Bill(_boughtProducts.Add(product), _appliedDiscounts);
-        
-        internal Bill CancelOne(Product product)
-        {
-            var bill = new Bill(_boughtProducts.RemoveOne(product), _appliedDiscounts);
-            return bill;
-        }
+        internal Bill AddOne(Product product) => new Bill(_boughtProducts.AddOne(product), _appliedDiscounts);
+
+        internal Bill CancelOne(Product product) => new Bill(_boughtProducts.RemoveOne(product), _appliedDiscounts);
 
         internal Bill ApplyDiscounts(Discounter discounter)
         {
@@ -68,15 +65,24 @@ namespace DomainModel.Domain.Checkout
 
         protected override IList<object> EqualityComponents => new List<object> { _boughtProducts };
 
-        private string SummaryLine => ThreeColumnLine(string.Empty, "TOTAL      ", $"€ {_boughtProducts.TotalPrice:f2}");
-        private string LastAddedLine(Product product) => ThreeColumnLine(product.Name, $"€ {product.Price:f2}", $"€ {_boughtProducts.TotalPrice:f2}");
+        private string SummaryLine
+        {
+            get
+            {
+                var discountsTotalPrice = _appliedDiscounts.Sum(d => d.SubTotal);
+                var totalPrice = _boughtProducts.TotalPrice + discountsTotalPrice;
+                return ThreeColumnLine(string.Empty, "TOTAL      ", Invariant($"€ {totalPrice:f2}"));
+            }
+        }
+
+        private string LastAddedLine(Product product) => ThreeColumnLine(product.Name, Invariant($"€ {product.Price:f2}"), Invariant($"€ {_boughtProducts.TotalPrice:f2}"));
 
         private static string PrintableProductLine(KeyValuePair<Product, int> productLine)
         {
             var count = productLine.Value;
             var product = productLine.Key;
             var unitPrice = product.Price;
-            return ThreeColumnLine(count, $"{product.Name} (unit price: € {unitPrice:f2})", $"€ {count * unitPrice:f2}");
+            return ThreeColumnLine(count, Invariant($"{product.Name} (unit price: € {unitPrice:f2})"), Invariant($"€ {count * unitPrice:f2}"));
         }
 
         private static string ThreeColumnLine(object a, object b, object c) => $"{a,2} {b,40} {c,8}";
