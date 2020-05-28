@@ -148,7 +148,7 @@ namespace DomainModel.Domain.Tests
         {
             var extractedString = Regex.Match(text, @"\d+\.\d+").Value;
             extractedString.Should().NotBeNullOrWhiteSpace();
-            return decimal.Parse(extractedString);
+            return decimal.Parse(extractedString, CultureInfo.InvariantCulture);
         }
     }
 }

@@ -9,6 +9,7 @@ namespace DomainModel.Checkout.Terminal
         private const string ExitCode = "c";
         private const string ShowCode = "s";
         private const string CancelCode = "r";
+        private const string LimitCode = "l";
         private static CheckoutService _service;
 
         private static void Main()
@@ -19,19 +20,25 @@ namespace DomainModel.Checkout.Terminal
             Console.ReadKey(true);
 
             _service = new CheckoutService();
-            _service.Start();
+            _service.Start(RenderLimitExceededText);
 
             string code;
 
             do
             {
-                Console.Write($"Bar code - or '{ExitCode}' to close checkout / '{ShowCode}' to show bill so far / '{CancelCode} to cancel one item': ");
+                Console.Write($"Bar code - or '{ExitCode}' to close checkout / '{ShowCode}' to show bill so far / '{CancelCode} to cancel one item' / '{LimitCode}' to set up a total price limit: ");
                 code = Console.ReadLine();
                 if (code == ExitCode) continue;
 
                 if (code == ShowCode)
                 {
                     ShowPartialBill();
+                    continue;
+                }
+
+                if (code == LimitCode)
+                {
+                    SetUpPriceLimit();
                     continue;
                 }
 
@@ -59,6 +66,17 @@ namespace DomainModel.Checkout.Terminal
             Console.WriteLine(_service.GetCurrentBill());
         }
 
+        private static void RenderLimitExceededText(decimal limit, decimal currentPrice)
+        {
+            Console.WriteLine($"Warning: Your limit has been exceeded (limit: € {limit}, current price: € {currentPrice})");
+        }
+
+        private static void SetUpPriceLimit()
+        {
+            var limit = ReadDecimalFromKeybard("Please enter price limit (0 for no limit): ");
+            _service.SetUpLimit(limit);
+        }
+
         private static void ShowPartialBill()
         {
             Console.WriteLine("Partial bill so far:");
@@ -71,6 +89,20 @@ namespace DomainModel.Checkout.Terminal
             string code = Console.ReadLine();
             _service.Cancel(code);
             ShowPartialBill();
+        }
+
+        private static decimal ReadDecimalFromKeybard(string initialText)
+        {
+            Console.Write(initialText);
+            string numberAsText = Console.ReadLine();
+            decimal number;
+            while (!decimal.TryParse(numberAsText, out number))
+            {
+                Console.Write("The text you entered isn't a valid number. Please try again: ");
+                numberAsText = Console.ReadLine();
+            }
+
+            return number;
         }
     }
 }

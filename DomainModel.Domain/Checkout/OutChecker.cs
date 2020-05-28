@@ -1,4 +1,5 @@
-﻿using Dawn;
+﻿using System;
+using Dawn;
 using DomainModel.Domain.Discounts;
 using DomainModel.Domain.Products;
 
@@ -16,6 +17,7 @@ namespace DomainModel.Domain.Checkout
         private readonly IProductRepository _repository;
         private ProcessState _state = ProcessState.NotStartedYet;
         private Bill _bill = Bill.NoBill;
+        private CheckoutLimit _limit = CheckoutLimit.NoLimit;
 
         public OutChecker(IProductRepository repository)
         {
@@ -42,6 +44,8 @@ namespace DomainModel.Domain.Checkout
             if (product == Product.NoProduct) throw new InvalidBarCodeException(barCode);
 
             _bill = _bill.AddOne(product);
+
+            CheckIfLimitExceeded();
         }
 
         /// <summary>
@@ -57,7 +61,25 @@ namespace DomainModel.Domain.Checkout
             _bill = _bill.CancelOne(product);
         }
 
+        public void SetUpLimit(CheckoutLimit limit)
+        {
+            Guard.Operation(_state == ProcessState.InProgress, $"You can only cancel items when checkout process {ProcessState.InProgress}");
+
+            _limit = limit;
+            CheckIfLimitExceeded();
+        }
+
+        private void CheckIfLimitExceeded()
+        {
+            if (_limit != CheckoutLimit.NoLimit && _limit.Limit < _bill.TotalPrice)
+            {
+                CheckoutLimitExceeded?.Invoke(_limit, _bill.TotalPrice);
+            }
+        }
+
         public Bill ShowBill() => _bill;
+        public delegate void CheckoutLimitExceededDelegate(CheckoutLimit limit, decimal currentPrice);
+        public event CheckoutLimitExceededDelegate CheckoutLimitExceeded;
 
         public void Close()
         {
