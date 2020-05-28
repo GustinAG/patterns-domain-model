@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using DomainModel.Domain.Checkout;
 
-namespace DomainModel.Domain.Products
+namespace DomainModel.Domain.Checkout
 {
     public class CheckoutLimit : ValueObject
     {
@@ -14,6 +13,8 @@ namespace DomainModel.Domain.Products
         }
 
         public decimal Limit { get; }
+
+        internal bool IsExceededBy(decimal price) => this != NoLimit && Limit < price;
 
         protected override IList<object> EqualityComponents => new List<object> { Limit };
     }

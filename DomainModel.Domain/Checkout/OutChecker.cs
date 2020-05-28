@@ -1,5 +1,4 @@
-﻿using System;
-using Dawn;
+﻿using Dawn;
 using DomainModel.Domain.Discounts;
 using DomainModel.Domain.Products;
 
@@ -71,10 +70,8 @@ namespace DomainModel.Domain.Checkout
 
         private void CheckIfLimitExceeded()
         {
-            if (_limit != CheckoutLimit.NoLimit && _limit.Limit < _bill.TotalPrice)
-            {
-                CheckoutLimitExceeded?.Invoke(_limit, _bill.TotalPrice);
-            }
+            // TODO: introduce domain event instead!
+            if (_limit.IsExceededBy(_bill.TotalPrice)) CheckoutLimitExceeded?.Invoke(_limit, _bill.TotalPrice);
         }
 
         public Bill ShowBill() => _bill;

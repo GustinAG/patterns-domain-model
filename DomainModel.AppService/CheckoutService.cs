@@ -2,7 +2,6 @@
 using Dawn;
 using DomainModel.Domain.Checkout;
 using DomainModel.Domain.Products;
-using static DomainModel.Domain.Checkout.OutChecker;
 
 namespace DomainModel.AppService
 {
@@ -19,13 +18,9 @@ namespace DomainModel.AppService
         public void Start(Action<decimal, decimal> limitExceededAction)
         {
             var repository = _resolver.Resolve<IProductRepository>();
+
             _outChecker = new OutChecker(repository);
-
-            CheckoutLimitExceededDelegate checkoutLimitExceeded = (limit, currentPrice) => {
-                limitExceededAction(limit.Limit, currentPrice);
-            };
-
-            _outChecker.CheckoutLimitExceeded += checkoutLimitExceeded;
+            _outChecker.CheckoutLimitExceeded += (l, p) => limitExceededAction(l.Limit, p);
             _outChecker.Start();
         }
 

@@ -68,7 +68,9 @@ namespace DomainModel.Checkout.Terminal
 
         private static void RenderLimitExceededText(decimal limit, decimal currentPrice)
         {
+            Console.WriteLine();
             Console.WriteLine($"Warning: Your limit has been exceeded (limit: € {limit}, current price: € {currentPrice})");
+            Console.WriteLine();
         }
 
         private static void SetUpPriceLimit()
