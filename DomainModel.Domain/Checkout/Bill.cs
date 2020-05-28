@@ -64,6 +64,8 @@ namespace DomainModel.Domain.Checkout
             return new Bill(_boughtProducts, discounts.ToList());
         }
 
+        internal decimal TotalPrice => _boughtProducts.TotalPrice;
+
         protected override IList<object> EqualityComponents => new List<object> { _boughtProducts };
 
         private string SummaryLine => ThreeColumnLine(string.Empty, "TOTAL      ", $"€ {_boughtProducts.TotalPrice:f2}");

@@ -1,6 +1,8 @@
-﻿using Dawn;
+﻿using System;
+using Dawn;
 using DomainModel.Domain.Checkout;
 using DomainModel.Domain.Products;
+using static DomainModel.Domain.Checkout.OutChecker;
 
 namespace DomainModel.AppService
 {
@@ -14,10 +16,16 @@ namespace DomainModel.AppService
             _resolver = resolver ?? DefaultResolver.Create();
         }
 
-        public void Start()
+        public void Start(Action<decimal, decimal> limitExceededAction)
         {
             var repository = _resolver.Resolve<IProductRepository>();
             _outChecker = new OutChecker(repository);
+
+            CheckoutLimitExceededDelegate checkoutLimitExceeded = (limit, currentPrice) => {
+                limitExceededAction(limit.Limit, currentPrice);
+            };
+
+            _outChecker.CheckoutLimitExceeded += checkoutLimitExceeded;
             _outChecker.Start();
         }
 
@@ -39,6 +47,12 @@ namespace DomainModel.AppService
         {
             Guard.Operation(_outChecker != null);
             _outChecker.Close();
+        }
+
+        public void SetUpLimit(decimal limit)
+        {
+            Guard.Operation(_outChecker != null);
+            _outChecker.SetUpLimit(new CheckoutLimit(limit));
         }
 
         public string GetCurrentBill()
