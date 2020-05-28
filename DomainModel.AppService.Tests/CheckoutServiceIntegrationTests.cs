@@ -14,6 +14,8 @@ namespace DomainModel.AppService.Tests
         private const string ValidCode = "1234";
         private const string InvalidCode = "000";
 
+        private static Action<decimal, decimal> EmptyAction = (a, b) => {};
+
         [TestMethod]
         public void Start_ShouldProduceEmptyBill()
         {
@@ -21,7 +23,7 @@ namespace DomainModel.AppService.Tests
             var service = GetServiceWithMockedRepository();
 
             // Act
-            service.Start();
+            service.Start(EmptyAction);
 
             // Assert
             var currentBill = service.GetCurrentBill();
@@ -34,7 +36,7 @@ namespace DomainModel.AppService.Tests
         {
             // Arrange
             var service = new CheckoutService();
-            service.Start();
+            service.Start(EmptyAction);
 
             // Act
             service.Scan(ValidCode);
@@ -50,7 +52,7 @@ namespace DomainModel.AppService.Tests
         {
             // Arrange
             var service = GetServiceWithMockedRepository();
-            service.Start();
+            service.Start(EmptyAction);
 
             // Act
             service.Scan(ValidCode);
@@ -66,7 +68,7 @@ namespace DomainModel.AppService.Tests
         {
             // Arrange
             var service = new CheckoutService();
-            service.Start();
+            service.Start(EmptyAction);
 
             // Act
             service.Scan(ValidCode);
@@ -85,7 +87,7 @@ namespace DomainModel.AppService.Tests
             // Arrange
             var service = new CheckoutService();
             Action scanAction = () => service.Scan(InvalidCode);
-            service.Start();
+            service.Start(EmptyAction);
 
             // Act & Assert
             scanAction.Should().Throw<InvalidBarCodeException>();
@@ -97,7 +99,7 @@ namespace DomainModel.AppService.Tests
             // Arrange
             var service = GetServiceWithMockedRepository();
             Action scanAction = () => service.Scan(ValidCode);
-            service.Start();
+            service.Start(EmptyAction);
             service.Close();
 
             // Act & Assert
