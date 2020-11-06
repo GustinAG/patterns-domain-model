@@ -30,7 +30,7 @@ On the other hand, with the help of this sample code, you will ***not*** see the
 ![DM](Domain.Model.png)
 
 ### Imaginary Context Map
-*(Only **Product** bounded context has sample code here)*
+*(Only **Checkout** bounded context has sample code here)*
 
 ![Map](Context.Map.png)
 

@@ -26,7 +26,7 @@ namespace DomainModel.Domain
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(this, obj)) return true;
-            if (ReferenceEquals(null, obj)) return false;
+            if (obj is null) return false;
             if (GetType() != obj.GetType()) return false;
 
             var valueObject = obj as ValueObject;

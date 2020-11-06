@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using Dawn;
 using DomainModel.Domain.Products;
 
 namespace DomainModel.Repositories
@@ -25,9 +27,12 @@ namespace DomainModel.Repositories
             new Product ("Pencil", 0.5M)
         };
 
+        [SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "Guard validates it here.")]
         public Product FindBy(BarCode barCode)
         {
-            int.TryParse(barCode.Code, out var code);
+            Guard.Argument(barCode, nameof(barCode)).NotNull();
+            if (!int.TryParse(barCode.Code, out var code)) return Product.NoProduct;
+
             code %= Products.Length;
 
             return Products[code];

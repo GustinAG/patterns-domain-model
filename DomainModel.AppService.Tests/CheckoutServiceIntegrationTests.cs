@@ -14,7 +14,7 @@ namespace DomainModel.AppService.Tests
         private const string ValidCode = "1234";
         private const string InvalidCode = "000";
 
-        private static Action<decimal, decimal> EmptyAction = (a, b) => {};
+        private static readonly Action<decimal, decimal> EmptyAction = (a, b) => {};
 
         [TestMethod]
         public void Start_ShouldProduceEmptyBill()
