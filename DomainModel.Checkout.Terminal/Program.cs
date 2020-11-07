@@ -13,8 +13,8 @@ namespace DomainModel.Checkout.Terminal
             Console.ReadKey(true);
 
             var service = new CheckoutService();
-            var displayer = new BillDisplayer(service);
-            var processor = new CommandProcessor(service, displayer);
+            var presenter = new BillPresenter(service);
+            var processor = new CommandProcessor(service, presenter);
 
             service.Start(RenderLimitExceededText);
 
@@ -27,9 +27,7 @@ namespace DomainModel.Checkout.Terminal
             } while (code != CommandCode.Exit);
 
             service.Close();
-
-            Console.WriteLine($"{Environment.NewLine}BILL:");
-            Console.WriteLine(service.GetCurrentBill());
+            presenter.ShowClosedBill();
         }
 
 

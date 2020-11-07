@@ -7,12 +7,12 @@ namespace DomainModel.Checkout.Terminal
     internal sealed class CommandProcessor
     {
         private readonly CheckoutService _service;
-        private readonly BillDisplayer _displayer;
+        private readonly BillPresenter _presenter;
 
-        internal CommandProcessor(CheckoutService service, BillDisplayer displayer)
+        internal CommandProcessor(CheckoutService service, BillPresenter presenter)
         {
             _service = service;
-            _displayer = displayer;
+            _presenter = presenter;
         }
 
         internal void Process(string code)
@@ -22,13 +22,13 @@ namespace DomainModel.Checkout.Terminal
                 case CommandCode.Exit:
                     break;
                 case CommandCode.Show:
-                    _displayer.ShowPartialBill();
+                    _presenter.ShowPartialBill();
                     break;
                 case CommandCode.Limit:
                     SetUpPriceLimit();
                     break;
                 case CommandCode.Cancel:
-                    CancelItem();
+                    RunWithCheckoutExceptionHandling(CancelItem);
                     break;
                 default:
                     ScanItem(code);
@@ -52,38 +52,28 @@ namespace DomainModel.Checkout.Terminal
 
         private void CancelItem()
         {
+            var code = CommandReader.ReadCancelBarCode();
+            _service.Cancel(code);
+            _presenter.ShowPartialBill();
+        }
+
+        private void SetUpPriceLimit()
+        {
+            var limit = CommandReader.ReadPriceLimit();
+            _service.SetUpLimit(limit);
+        }
+
+        private static void RunWithCheckoutExceptionHandling(Action action)
+        {
             try
             {
-                Console.Write("Bar code to cancel: ");
-                string code = Console.ReadLine();
-                _service.Cancel(code);
-                _displayer.ShowPartialBill();
+                action();
             }
             catch (Exception e)
                 when (e is InvalidBarCodeException || e is BoughtProductNotFoundException)
             {
                 Console.WriteLine(e.Message);
             }
-        }
-
-        private void SetUpPriceLimit()
-        {
-            var limit = ReadDecimalFromKeyboard("Please enter price limit (0 for no limit): ");
-            _service.SetUpLimit(limit);
-        }
-
-        private static decimal ReadDecimalFromKeyboard(string initialText)
-        {
-            Console.Write(initialText);
-            string numberAsText = Console.ReadLine();
-            decimal number;
-            while (!decimal.TryParse(numberAsText, out number))
-            {
-                Console.Write("The text you entered isn't a valid number. Please try again: ");
-                numberAsText = Console.ReadLine();
-            }
-
-            return number;
         }
     }
 }
