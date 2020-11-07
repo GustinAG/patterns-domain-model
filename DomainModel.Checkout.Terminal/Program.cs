@@ -1,5 +1,5 @@
 ﻿using System;
-using DomainModel.AppService;
+using Autofac;
 
 namespace DomainModel.Checkout.Terminal
 {
@@ -12,30 +12,12 @@ namespace DomainModel.Checkout.Terminal
             Console.WriteLine("Press any key to start checkout process!");
             Console.ReadKey(true);
 
-            var service = new CheckoutService();
-            var presenter = new BillPresenter(service);
-            var processor = new CommandProcessor(service, presenter);
+            // Based on: https://autofaccn.readthedocs.io/en/latest/resolve/index.html
+            var container = TypeRegistry.Build();
 
-            service.Start(RenderLimitExceededText);
-
-            string code;
-
-            do
-            {
-                code = CommandReader.ReadCommandCode();
-                processor.Process(code);
-            } while (code != CommandCode.Exit);
-
-            service.Close();
-            presenter.ShowClosedBill();
-        }
-
-
-        private static void RenderLimitExceededText(decimal limit, decimal currentPrice)
-        {
-            Console.WriteLine();
-            Console.WriteLine($"Warning: Your limit has been exceeded (limit: € {limit}, current price: € {currentPrice})");
-            Console.WriteLine();
+            using var scope = container.BeginLifetimeScope();
+            var process = scope.Resolve<MainProcess>();
+            process.Run();
         }
     }
 }

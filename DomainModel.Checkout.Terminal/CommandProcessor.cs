@@ -1,16 +1,18 @@
 ﻿using System;
-using DomainModel.AppService;
+using DomainModel.Contracts;
 using DomainModel.Domain.Checkout;
 
 namespace DomainModel.Checkout.Terminal
 {
     internal sealed class CommandProcessor
     {
-        private readonly CheckoutService _service;
+        private readonly ICommandReader _commandReader;
+        private readonly ICheckoutService _service;
         private readonly BillPresenter _presenter;
 
-        internal CommandProcessor(CheckoutService service, BillPresenter presenter)
+        public CommandProcessor(ICommandReader commandReader, ICheckoutService service, BillPresenter presenter)
         {
+            _commandReader = commandReader;
             _service = service;
             _presenter = presenter;
         }
@@ -52,14 +54,14 @@ namespace DomainModel.Checkout.Terminal
 
         private void CancelItem()
         {
-            var code = CommandReader.ReadCancelBarCode();
+            var code = _commandReader.ReadCancelBarCode();
             _service.Cancel(code);
             _presenter.ShowPartialBill();
         }
 
         private void SetUpPriceLimit()
         {
-            var limit = CommandReader.ReadPriceLimit();
+            var limit = _commandReader.ReadPriceLimit();
             _service.SetUpLimit(limit);
         }
 

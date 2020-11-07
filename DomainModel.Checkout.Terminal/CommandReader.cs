@@ -2,15 +2,15 @@
 
 namespace DomainModel.Checkout.Terminal
 {
-    internal static class CommandReader
+    internal  class CommandReader : ICommandReader
     {
-        internal static string ReadCommandCode()
+        public string ReadCommandCode()
         {
             Console.Write($"Bar code - or '{CommandCode.Exit}' to close checkout / '{CommandCode.Show}' to show bill so far / '{CommandCode.Cancel} to cancel one item' / '{CommandCode.Limit}' to set up a total price limit: ");
             return Console.ReadLine();
         }
 
-        internal static decimal ReadPriceLimit()
+        public decimal ReadPriceLimit()
         {
             Console.Write("Please enter price limit (0 for no limit): ");
             var numberAsText = Console.ReadLine();
@@ -25,7 +25,7 @@ namespace DomainModel.Checkout.Terminal
             return number;
         }
 
-        internal static string ReadCancelBarCode()
+        public string ReadCancelBarCode()
         {
             Console.Write("Bar code to cancel: ");
             return Console.ReadLine();

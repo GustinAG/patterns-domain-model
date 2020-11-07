@@ -1,13 +1,13 @@
 ﻿using System;
-using DomainModel.AppService;
+using DomainModel.Contracts;
 
 namespace DomainModel.Checkout.Terminal
 {
     internal sealed class BillPresenter
     {
-        private readonly CheckoutService _service;
+        private readonly ICheckoutService _service;
 
-        internal BillPresenter(CheckoutService service)
+        public BillPresenter(ICheckoutService service)
         {
             _service = service;
         }

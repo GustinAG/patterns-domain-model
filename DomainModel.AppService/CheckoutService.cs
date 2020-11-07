@@ -1,25 +1,22 @@
 ﻿using System;
 using Dawn;
+using DomainModel.Contracts;
 using DomainModel.Domain.Checkout;
 using DomainModel.Domain.Products;
 
 namespace DomainModel.AppService
 {
-    public class CheckoutService
+    public class CheckoutService : ICheckoutService
     {
-        private readonly IResolver _resolver;
-        private OutChecker _outChecker;
+        private readonly OutChecker _outChecker;
 
-        public CheckoutService(IResolver resolver = null)
+        public CheckoutService(OutChecker outChecker)
         {
-            _resolver = resolver ?? DefaultResolver.Create();
+            _outChecker = outChecker;
         }
 
         public void Start(Action<decimal, decimal> limitExceededAction)
         {
-            var repository = _resolver.Resolve<IProductRepository>();
-
-            _outChecker = new OutChecker(repository);
             _outChecker.CheckoutLimitExceeded += (l, p) => limitExceededAction(l.Limit, p);
             _outChecker.Start();
         }

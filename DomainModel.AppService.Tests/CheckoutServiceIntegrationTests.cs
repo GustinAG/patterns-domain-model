@@ -1,6 +1,7 @@
 ﻿using System;
 using DomainModel.Domain.Checkout;
 using DomainModel.Domain.Products;
+using DomainModel.Repositories;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -14,13 +15,13 @@ namespace DomainModel.AppService.Tests
         private const string ValidCode = "1234";
         private const string InvalidCode = "000";
 
-        private static readonly Action<decimal, decimal> EmptyAction = (a, b) => {};
+        private static readonly Action<decimal, decimal> EmptyAction = (a, b) => { };
 
         [TestMethod]
         public void Start_ShouldProduceEmptyBill()
         {
             // Arrange
-            var service = GetServiceWithMockedRepository();
+            var service = CreateService();
 
             // Act
             service.Start(EmptyAction);
@@ -35,7 +36,7 @@ namespace DomainModel.AppService.Tests
         public void Scan_ShouldProduceNonEmptyBill()
         {
             // Arrange
-            var service = new CheckoutService();
+            var service = CreateService();
             service.Start(EmptyAction);
 
             // Act
@@ -51,7 +52,7 @@ namespace DomainModel.AppService.Tests
         public void Scan_ShouldProduceBillWithScannedProduct()
         {
             // Arrange
-            var service = GetServiceWithMockedRepository();
+            var service = CreateService();
             service.Start(EmptyAction);
 
             // Act
@@ -67,7 +68,7 @@ namespace DomainModel.AppService.Tests
         public void Scan_ShouldProduceThreeLinesBill_WhenSameProductScanned()
         {
             // Arrange
-            var service = new CheckoutService();
+            var service = CreateService();
             service.Start(EmptyAction);
 
             // Act
@@ -85,7 +86,7 @@ namespace DomainModel.AppService.Tests
         public void Scan_ShouldThrowExceptionForInvalidBarCode()
         {
             // Arrange
-            var service = new CheckoutService();
+            var service = CreateService(false);
             Action scanAction = () => service.Scan(InvalidCode);
             service.Start(EmptyAction);
 
@@ -97,7 +98,7 @@ namespace DomainModel.AppService.Tests
         public void Scan_ShouldThrowException_WhenCheckoutProcessClosed()
         {
             // Arrange
-            var service = GetServiceWithMockedRepository();
+            var service = CreateService();
             Action scanAction = () => service.Scan(ValidCode);
             service.Start(EmptyAction);
             service.Close();
@@ -106,16 +107,20 @@ namespace DomainModel.AppService.Tests
             scanAction.Should().Throw<InvalidOperationException>();
         }
 
-        private static CheckoutService GetServiceWithMockedRepository()
+        private static CheckoutService CreateService(bool mockRepository = true)
         {
-            var resolver = new RegisteringResolver();
+            var repository = mockRepository ? CreateMockedRepository() : new ProductRepository();
+            return new CheckoutService(new OutChecker(repository));
+        }
+
+        private static IProductRepository CreateMockedRepository()
+        {
             var repository = Substitute.For<IProductRepository>();
 
             repository.FindBy(new BarCode(ValidCode)).Returns(new Product(TestProductName, 0.98M));
             repository.FindBy(Arg.Any<string>()).Returns(Product.NoProduct);
-            resolver.Register<IProductRepository>(() => repository);
 
-            return new CheckoutService(resolver);
+            return repository;
         }
     }
 }

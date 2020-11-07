@@ -11,10 +11,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DomainModel.Contracts\DomainModel.Contracts.csproj" />
-    <ProjectReference Include="..\DomainModel.Domain\DomainModel.Domain.csproj" />
-    <ProjectReference Include="..\DomainModel.Repositories\DomainModel.Repositories.csproj" />
-  </ItemGroup>
-
 </Project>
