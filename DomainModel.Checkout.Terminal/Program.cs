@@ -1,17 +1,10 @@
 ﻿using System;
 using DomainModel.AppService;
-using DomainModel.Domain.Checkout;
 
 namespace DomainModel.Checkout.Terminal
 {
     internal static class Program
     {
-        private const string ExitCode = "c";
-        private const string ShowCode = "s";
-        private const string CancelCode = "r";
-        private const string LimitCode = "l";
-        private static CheckoutService _service;
-
         private static void Main()
         {
             // See: https://www.codeproject.com/Questions/455766/Euro-symbol-does-not-show-up-in-Console-WriteLine
@@ -19,92 +12,32 @@ namespace DomainModel.Checkout.Terminal
             Console.WriteLine("Press any key to start checkout process!");
             Console.ReadKey(true);
 
-            _service = new CheckoutService();
-            _service.Start(RenderLimitExceededText);
+            var service = new CheckoutService();
+            var displayer = new BillDisplayer(service);
+            var processor = new CommandProcessor(service, displayer);
+
+            service.Start(RenderLimitExceededText);
 
             string code;
 
             do
             {
-                Console.Write($"Bar code - or '{ExitCode}' to close checkout / '{ShowCode}' to show bill so far / '{CancelCode} to cancel one item' / '{LimitCode}' to set up a total price limit: ");
-                code = Console.ReadLine();
-                if (code == ExitCode) continue;
+                code = CommandReader.ReadCommandCode();
+                processor.Process(code);
+            } while (code != CommandCode.Exit);
 
-                if (code == ShowCode)
-                {
-                    ShowPartialBill();
-                    continue;
-                }
-
-                if (code == LimitCode)
-                {
-                    SetUpPriceLimit();
-                    continue;
-                }
-
-                try
-                {
-                    if (code == CancelCode)
-                    {
-                        CancelItem();
-                        continue;
-                    }
-
-                    _service.Scan(code);
-                    Console.WriteLine(_service.GetLastAdded());
-                }
-                catch (Exception e)
-                    when (e is InvalidBarCodeException || e is BoughtProductNotFoundException)
-                {
-                    Console.WriteLine(e.Message);
-                }
-            } while (code != ExitCode);
-
-            _service.Close();
+            service.Close();
 
             Console.WriteLine($"{Environment.NewLine}BILL:");
-            Console.WriteLine(_service.GetCurrentBill());
+            Console.WriteLine(service.GetCurrentBill());
         }
+
 
         private static void RenderLimitExceededText(decimal limit, decimal currentPrice)
         {
             Console.WriteLine();
             Console.WriteLine($"Warning: Your limit has been exceeded (limit: € {limit}, current price: € {currentPrice})");
             Console.WriteLine();
-        }
-
-        private static void SetUpPriceLimit()
-        {
-            var limit = ReadDecimalFromKeybard("Please enter price limit (0 for no limit): ");
-            _service.SetUpLimit(limit);
-        }
-
-        private static void ShowPartialBill()
-        {
-            Console.WriteLine("Partial bill so far:");
-            Console.WriteLine(_service.GetCurrentBill());
-        }
-
-        private static void CancelItem()
-        {
-            Console.Write("Bar code to cancel: ");
-            string code = Console.ReadLine();
-            _service.Cancel(code);
-            ShowPartialBill();
-        }
-
-        private static decimal ReadDecimalFromKeybard(string initialText)
-        {
-            Console.Write(initialText);
-            string numberAsText = Console.ReadLine();
-            decimal number;
-            while (!decimal.TryParse(numberAsText, out number))
-            {
-                Console.Write("The text you entered isn't a valid number. Please try again: ");
-                numberAsText = Console.ReadLine();
-            }
-
-            return number;
         }
     }
 }
