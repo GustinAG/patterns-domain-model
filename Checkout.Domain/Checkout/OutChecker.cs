@@ -23,12 +23,14 @@ namespace Checkout.Domain.Checkout
             _repository = repository;
         }
 
+        public bool CanStart => _state == ProcessState.NotStartedYet;
+
         /// <summary>
         /// Starts the checkout process.
         /// </summary>
         public void Start()
         {
-            Guard.Operation(_state == ProcessState.NotStartedYet, $"You cannot start a checkout process when {_state}");
+            Guard.Operation(CanStart, $"You cannot start a checkout process when {_state}");
             _bill = Bill.EmptyBill;
             _state = ProcessState.InProgress;
         }

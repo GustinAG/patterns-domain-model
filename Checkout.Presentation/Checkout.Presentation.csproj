@@ -4,4 +4,14 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Checkout.AppService\Checkout.AppService.csproj" />
+    <ProjectReference Include="..\Checkout.Contracts\Checkout.Contracts.csproj" />
+    <ProjectReference Include="..\Checkout.Repositories\Checkout.Repositories.csproj" />
+  </ItemGroup>
+
 </Project>

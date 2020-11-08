@@ -1,5 +1,4 @@
-﻿using System;
-using Checkout.Contracts;
+﻿using Checkout.Contracts;
 
 namespace Checkout.Terminal
 {
@@ -20,7 +19,7 @@ namespace Checkout.Terminal
 
         internal void Run()
         {
-            _service.Start(RenderLimitExceededText);
+            _processor.Start();
 
             string code;
 
@@ -32,14 +31,6 @@ namespace Checkout.Terminal
 
             _service.Close();
             _presenter.ShowClosedBill();
-
-        }
-
-        private static void RenderLimitExceededText(decimal limit, decimal currentPrice)
-        {
-            Console.WriteLine();
-            Console.WriteLine($"Warning: Your limit has been exceeded (limit: € {limit}, current price: € {currentPrice})");
-            Console.WriteLine();
         }
     }
 }

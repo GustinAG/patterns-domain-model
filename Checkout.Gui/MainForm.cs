@@ -1,25 +1,42 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using Autofac;
+using Checkout.Presentation;
+using IContainer = Autofac.IContainer;
 
 namespace Checkout.Gui
 {
-    public partial class MainForm : Form
+    public partial class MainForm : Form, IPresenter
     {
+        private readonly IContainer _container;
+        private readonly Invoker _invoker;
+
         public MainForm()
         {
             InitializeComponent();
+            _invoker = new Invoker(RefreshControls);
+            _container = TypeRegistry.Build(RegisterThis);
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
-        {
+        public void WarnLimitExceeded(decimal limit, decimal currentPrice)
+        { }
 
+        private void RegisterThis(ContainerBuilder builder) => builder.RegisterInstance(this).As<IPresenter>();
+
+        private void MainForm_Load(object sender, EventArgs e) => RefreshControls();
+
+        private void RefreshControls()
+        {
+            using var scope = _container.BeginLifetimeScope();
+            var startCommand = scope.Resolve<StartCommand>();
+            StartButton.Enabled = startCommand.CanExecute;
+        }
+
+        private void StartButton_Click(object sender, EventArgs e)
+        {
+            using var scope = _container.BeginLifetimeScope();
+            var startCommand = scope.Resolve<StartCommand>();
+            _invoker.Invoke(startCommand);
         }
     }
 }

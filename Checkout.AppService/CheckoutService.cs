@@ -12,51 +12,36 @@ namespace Checkout.AppService
 
         public CheckoutService(OutChecker outChecker)
         {
+            Guard.Operation(outChecker != null);
             _outChecker = outChecker;
         }
 
-        public void Start(Action<decimal, decimal> limitExceededAction)
+        public void Start(Action<decimal, decimal> limitExceededAction = null)
         {
-            _outChecker.CheckoutLimitExceeded += (l, p) => limitExceededAction(l.Limit, p);
+            _outChecker.CheckoutLimitExceeded += (l, p) => limitExceededAction?.Invoke(l.Limit, p);
             _outChecker.Start();
         }
 
         public void Scan(string code)
         {
-            Guard.Operation(_outChecker != null);
             var barCode = new BarCode(code);
             _outChecker.Scan(barCode);
         }
 
         public void Cancel(string code)
         {
-            Guard.Operation(_outChecker != null);
             var barCode = new BarCode(code);
             _outChecker.Cancel(barCode);
         }
 
-        public void Close()
-        {
-            Guard.Operation(_outChecker != null);
-            _outChecker.Close();
-        }
+        public void Close() => _outChecker.Close();
 
-        public void SetUpLimit(decimal limit)
-        {
-            Guard.Operation(_outChecker != null);
-            _outChecker.SetUpLimit(new CheckoutLimit(limit));
-        }
+        public void SetUpLimit(decimal limit) => _outChecker.SetUpLimit(new CheckoutLimit(limit));
 
-        public string GetCurrentBill()
-        {
-            Guard.Operation(_outChecker != null);
-            return _outChecker.ShowBill().PrintableText;
-        }
+        public string GetCurrentBill() => _outChecker.ShowBill().PrintableText;
 
-        public string GetLastAdded()
-        {
-            Guard.Operation(_outChecker != null);
-            return _outChecker.ShowBill().PrintableLastAddedProductText;
-        }
+        public string GetLastAdded() => _outChecker.ShowBill().PrintableLastAddedProductText;
+
+        public bool CanStart => _outChecker.CanStart;
     }
 }

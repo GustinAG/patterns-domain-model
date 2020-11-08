@@ -50,6 +50,7 @@
             // BarCodeTextBox
             // 
             this.BarCodeTextBox.CharacterCasing = System.Windows.Forms.CharacterCasing.Upper;
+            this.BarCodeTextBox.Enabled = false;
             this.BarCodeTextBox.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.BarCodeTextBox.Location = new System.Drawing.Point(12, 84);
             this.BarCodeTextBox.MaxLength = 3;
@@ -60,6 +61,7 @@
             // StartButton
             // 
             this.StartButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
+            this.StartButton.Enabled = false;
             this.StartButton.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.StartButton.Location = new System.Drawing.Point(12, 12);
             this.StartButton.Name = "StartButton";
@@ -67,10 +69,12 @@
             this.StartButton.TabIndex = 2;
             this.StartButton.Text = "Start";
             this.StartButton.UseVisualStyleBackColor = false;
+            this.StartButton.Click += new System.EventHandler(this.StartButton_Click);
             // 
             // ScanButton
             // 
             this.ScanButton.BackColor = System.Drawing.Color.Aqua;
+            this.ScanButton.Enabled = false;
             this.ScanButton.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.ScanButton.Location = new System.Drawing.Point(118, 84);
             this.ScanButton.Name = "ScanButton";
@@ -82,6 +86,7 @@
             // CancelItemButton
             // 
             this.CancelItemButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.CancelItemButton.Enabled = false;
             this.CancelItemButton.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.CancelItemButton.ForeColor = System.Drawing.Color.Red;
             this.CancelItemButton.Location = new System.Drawing.Point(277, 84);
@@ -94,6 +99,7 @@
             // StopButton
             // 
             this.StopButton.BackColor = System.Drawing.Color.Red;
+            this.StopButton.Enabled = false;
             this.StopButton.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.StopButton.ForeColor = System.Drawing.Color.White;
             this.StopButton.Location = new System.Drawing.Point(221, 12);

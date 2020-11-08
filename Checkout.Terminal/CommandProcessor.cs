@@ -1,21 +1,26 @@
 ﻿using System;
 using Checkout.Contracts;
 using Checkout.Domain.Checkout;
+using Checkout.Presentation;
 
 namespace Checkout.Terminal
 {
     internal sealed class CommandProcessor
     {
         private readonly ICommandReader _commandReader;
+        private readonly StartCommand _startCommand;
         private readonly ICheckoutService _service;
         private readonly BillPresenter _presenter;
 
-        public CommandProcessor(ICommandReader commandReader, ICheckoutService service, BillPresenter presenter)
+        public CommandProcessor(ICommandReader commandReader, StartCommand startCommand, ICheckoutService service, BillPresenter presenter)
         {
             _commandReader = commandReader;
+            _startCommand = startCommand;
             _service = service;
             _presenter = presenter;
         }
+
+        internal void Start() => _startCommand.Execute();
 
         internal void Process(string code)
         {

@@ -1,5 +1,6 @@
 using Autofac;
 using Checkout.Domain.Products;
+using Checkout.Presentation;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -22,7 +23,7 @@ namespace Checkout.Terminal.Tests
         public void Build_ShouldResolveMainProcess()
         {
             // Act
-            var container = TypeRegistry.Build();
+            var container = TerminalTypeRegistry.Build();
 
             // Assert
             container.Should().NotBeNull();

@@ -6,20 +6,17 @@ using Checkout.Domain.Checkout;
 using Checkout.Domain.Products;
 using Checkout.Repositories;
 
-namespace Checkout.Terminal
+namespace Checkout.Presentation
 {
-    internal static class TypeRegistry
+    public static class TypeRegistry
     {
         // Based on: https://autofaccn.readthedocs.io/en/latest/getting-started/index.html
-        internal static IContainer Build(Action<ContainerBuilder> additionalRegistrationsAction = null)
+        public static IContainer Build(Action<ContainerBuilder> additionalRegistrationsAction = null)
         {
             var builder = new ContainerBuilder();
 
             // Presentation:
-            builder.RegisterType<BillPresenter>().AsSelf();
-            builder.RegisterType<CommandReader>().As<ICommandReader>();
-            builder.RegisterType<CommandProcessor>().AsSelf();
-            builder.RegisterType<MainProcess>().AsSelf();
+            builder.RegisterType<StartCommand>().AsSelf();
 
             // Service:
             builder.RegisterType<CheckoutService>().As<ICheckoutService>().SingleInstance();

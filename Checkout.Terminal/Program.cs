@@ -13,7 +13,7 @@ namespace Checkout.Terminal
             Console.ReadKey(true);
 
             // Based on: https://autofaccn.readthedocs.io/en/latest/resolve/index.html
-            var container = TypeRegistry.Build();
+            var container = TerminalTypeRegistry.Build();
 
             using var scope = container.BeginLifetimeScope();
             var process = scope.Resolve<MainProcess>();

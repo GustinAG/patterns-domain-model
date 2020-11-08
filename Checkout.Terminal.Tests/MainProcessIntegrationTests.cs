@@ -17,7 +17,7 @@ namespace Checkout.Terminal.Tests
             const string testProductName = "test";
             var testProduct = new Product(testProductName, decimal.One);
             var repository = CreateMockedRepository(testProduct);
-            var container = TypeRegistry.Build(b => RegisterMocks(b, repository));
+            var container = TerminalTypeRegistry.Build(b => RegisterMocks(b, repository));
 
             using var scope = container.BeginLifetimeScope();
             var process = scope.Resolve<MainProcess>();
