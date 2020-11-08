@@ -38,10 +38,14 @@ On the other hand, with the help of this sample code, you will ***not*** see the
 ## Architecture Patterns <br /> <small> *covered in this sample* </small>
  + **D**omain **M**odel
  + **I**nversion **o**f **C**ontrol / **D**ependency **I**njection
+ + Service Layer
  + Repository
 
 ### See Also
  + &rarr; [Inversion of Control Containers and the Dependency Injection pattern *(Fowler)*](https://martinfowler.com/articles/injection.html)
+ + &rarr; [Service Layer *(Fowler)*](https://martinfowler.com/eaaCatalog/serviceLayer.html)
+ + &rarr; [Design of Service Layer and Application Logic *(Zakrevsky)*](https://emacsway.github.io/en/service-layer)
+ + &rarr; [Repository *(Fowler)*](https://martinfowler.com/eaaCatalog/repository.html)
 
 ---
 ## TO-DO
