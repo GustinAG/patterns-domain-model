@@ -38,9 +38,9 @@ namespace Checkout.AppService
 
         public void SetUpLimit(decimal limit) => _outChecker.SetUpLimit(new CheckoutLimit(limit));
 
-        public string GetCurrentBill() => _outChecker.ShowBill().PrintableText;
+        public Bill GetCurrentBill() => _outChecker.ShowBill();
 
-        public string GetLastAdded() => _outChecker.ShowBill().PrintableLastAddedProductText;
+        public Product GetLastAdded() => _outChecker.ShowBill().LastAddedProduct;
 
         public bool CanStart => _outChecker.CanStart;
     }

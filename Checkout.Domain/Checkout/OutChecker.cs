@@ -73,7 +73,7 @@ namespace Checkout.Domain.Checkout
         private void CheckIfLimitExceeded()
         {
             // TODO: introduce domain event instead!
-            if (_limit.IsExceededBy(_bill.TotalPrice)) CheckoutLimitExceeded?.Invoke(_limit, _bill.TotalPrice);
+            if (_limit.IsExceededBy(_bill.NoDiscountTotalPrice)) CheckoutLimitExceeded?.Invoke(_limit, _bill.NoDiscountTotalPrice);
         }
 
         public Bill ShowBill() => _bill;

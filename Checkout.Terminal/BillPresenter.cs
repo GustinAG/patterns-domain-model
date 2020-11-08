@@ -23,13 +23,19 @@ namespace Checkout.Terminal
         internal void ShowPartialBill()
         {
             Console.WriteLine("Partial bill so far:");
-            Console.WriteLine(_service.GetCurrentBill());
+            Console.WriteLine(GetCurrentBillText());
         }
 
         internal void ShowClosedBill()
         {
             Console.WriteLine($"{Environment.NewLine}BILL:");
-            Console.WriteLine(_service.GetCurrentBill());
+            Console.WriteLine(GetCurrentBillText());
+        }
+
+        private string GetCurrentBillText()
+        {
+            var bill = _service.GetCurrentBill();
+            return new BillAppearance(bill).AsText;
         }
     }
 }

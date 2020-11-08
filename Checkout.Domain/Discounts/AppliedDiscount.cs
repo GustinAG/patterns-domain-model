@@ -2,7 +2,7 @@
 
 namespace Checkout.Domain.Discounts
 {
-    internal class AppliedDiscount : ValueObject
+    public class AppliedDiscount : ValueObject
     {
         internal AppliedDiscount(string name, decimal subTotal)
         {

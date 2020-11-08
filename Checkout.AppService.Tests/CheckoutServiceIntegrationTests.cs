@@ -16,6 +16,7 @@ namespace Checkout.AppService.Tests
         private const string InvalidCode = "000";
 
         private static readonly Action<decimal, decimal> EmptyAction = (a, b) => { };
+        private static readonly Product TestProduct = new Product(TestProductName, 0.98M);
 
         [TestMethod]
         public void Start_ShouldProduceEmptyBill()
@@ -29,7 +30,7 @@ namespace Checkout.AppService.Tests
             // Assert
             var currentBill = service.GetCurrentBill();
             Console.WriteLine(currentBill);
-            currentBill.Should().Be(Bill.EmptyBill.PrintableText);
+            currentBill.Should().Be(Bill.EmptyBill);
         }
 
         [TestMethod]
@@ -45,7 +46,7 @@ namespace Checkout.AppService.Tests
             // Assert
             var currentBill = service.GetCurrentBill();
             Console.WriteLine(currentBill);
-            currentBill.Should().NotBeEquivalentTo(Bill.EmptyBill.PrintableText);
+            currentBill.Should().NotBeEquivalentTo(Bill.EmptyBill);
         }
 
         [TestMethod]
@@ -53,7 +54,7 @@ namespace Checkout.AppService.Tests
         {
             // Arrange
             var service = CreateService();
-            service.Start(EmptyAction);
+            service.Start();
 
             // Act
             service.Scan(ValidCode);
@@ -61,11 +62,11 @@ namespace Checkout.AppService.Tests
             // Assert
             var currentBill = service.GetCurrentBill();
             Console.WriteLine(currentBill);
-            currentBill.Should().Contain(TestProductName);
+            currentBill.GroupedBoughtProducts.Should().Contain(p => p.Key == TestProduct);
         }
 
         [TestMethod]
-        public void Scan_ShouldProduceThreeLinesBill_WhenSameProductScanned()
+        public void Scan_ShouldProduceTOneGroup_WhenSameProductScanned()
         {
             // Arrange
             var service = CreateService();
@@ -79,7 +80,7 @@ namespace Checkout.AppService.Tests
             // Assert
             var currentBill = service.GetCurrentBill();
             Console.WriteLine(currentBill);
-            currentBill.Should().Contain(Environment.NewLine, Exactly.Twice());
+            currentBill.GroupedBoughtProducts.Should().HaveCount(1);
         }
 
         [TestMethod]
@@ -117,7 +118,7 @@ namespace Checkout.AppService.Tests
         {
             var repository = Substitute.For<IProductRepository>();
 
-            repository.FindBy(new BarCode(ValidCode)).Returns(new Product(TestProductName, 0.98M));
+            repository.FindBy(new BarCode(ValidCode)).Returns(TestProduct);
             repository.FindBy(Arg.Any<string>()).Returns(Product.NoProduct);
 
             return repository;

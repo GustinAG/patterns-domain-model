@@ -1,4 +1,6 @@
 ﻿using System;
+using Checkout.Domain.Checkout;
+using Checkout.Domain.Products;
 
 namespace Checkout.Contracts
 {
@@ -9,8 +11,8 @@ namespace Checkout.Contracts
         void Cancel(string code);
         void Close();
         void SetUpLimit(decimal limit);
-        string GetCurrentBill();
-        string GetLastAdded();
+        Bill GetCurrentBill();
+        Product GetLastAdded();
         bool CanStart { get; }
     }
 }

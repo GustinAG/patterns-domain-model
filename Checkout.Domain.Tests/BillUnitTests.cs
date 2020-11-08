@@ -1,82 +1,77 @@
 using System;
-using System.Globalization;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Checkout.Domain.Checkout;
 using Checkout.Domain.Discounts;
 using Checkout.Domain.Products;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
-using static System.FormattableString;
 
 namespace Checkout.Domain.Tests
 {
     [TestClass]
     public class BillUnitTests
     {
-        private const string NoBillText = "No bill available!";
-        private const string EmptyBillText = "Empty bill - nothing bought.";
         private const decimal ApplePrice = 0.3M;
         private const decimal PearPrice = 0.2M;
         private const string PearName = "pear";
         private const decimal WalnutPrice = 0.4M;
 
+        private static readonly Product Pear = new Product(PearName, PearPrice);
+        private static readonly Product Apple = new Product("apple", ApplePrice);
+        private static readonly Product Walnut = new Product("walnut", WalnutPrice);
+
         [TestMethod]
-        public void PrintableText_ShouldContainSubtotalValueInLastLine()
+        public void NoDiscountTotalPrice_ShouldBeSumOfProductPrices()
         {
             // Arrange
-            var bill = CreateBillFromProducts(CreateProductApple(), CreateProductPear());
-            var expectedSubtotalText = (ApplePrice + PearPrice).ToString(CultureInfo.InvariantCulture);
+            var bill = CreateBillFromProducts(Apple, Pear);
+            var expectedPrice = ApplePrice + PearPrice;
 
             // Act
-            var text = bill.PrintableText;
+            var price = bill.NoDiscountTotalPrice;
 
             // Assert
-            LastLineOf(text).Should().Contain(expectedSubtotalText);
+            price.Should().Be(expectedPrice);
         }
 
         [TestMethod]
-        public void PrintableLastAddedProductText_ShouldReturnNoBillText_WhenNoBillExists()
-        {
-            // Arrange
-            var bill = Bill.NoBill;
-
-            // Act
-            var text = bill.PrintableLastAddedProductText;
-
-            // Assert
-            text.Should().Be(NoBillText);
-        }
-
-        [TestMethod]
-        public void PrintableLastAddedProductText_ShouldReturnEmptyBillText_WhenNoProductOnBillYet()
+        public void NoDiscountTotalPrice_ShouldBeZero_WhenNoProductOnBillYet()
         {
             // Arrange
             var bill = Bill.EmptyBill;
 
             // Act
-            var text = bill.PrintableLastAddedProductText;
+            var price = bill.NoDiscountTotalPrice;
 
             // Assert
-            text.Should().Be(EmptyBillText);
+            price.Should().Be(0);
         }
 
         [TestMethod]
-        public void PrintableLastAddedProductText_ShouldReturnLastAddedProductDetails()
+        public void TotalPrice_ShouldBeZero_WhenNoProductOnBillYet()
         {
             // Arrange
-            var bill = CreateBillFromProducts(CreateProductApple(), CreateProductWalnut(), CreateProductPear());
-            var expectedPearPriceText = Invariant($"€ {PearPrice}");
-            var expectedTotalPriceText = Invariant($"€ {ApplePrice + WalnutPrice + PearPrice}");
+            var bill = Bill.EmptyBill;
 
             // Act
-            var text = bill.PrintableLastAddedProductText;
+            var price = bill.TotalPrice;
 
             // Assert
-            text.Should().Contain(PearName);
-            text.Should().Contain(expectedPearPriceText);
-            text.Should().Contain(expectedTotalPriceText);
+            price.Should().Be(0);
+        }
+
+        [TestMethod]
+        public void LastAddedProduct_ShouldReturnLastAddedProduct()
+        {
+            // Arrange
+            var bill = CreateBillFromProducts(Apple, Walnut, Pear);
+
+            // Act
+            var product = bill.LastAddedProduct;
+
+            // Assert
+            product.Should().Be(Pear);
         }
 
         [TestMethod]
@@ -84,8 +79,7 @@ namespace Checkout.Domain.Tests
         {
             // Arrange
             var count = 5;
-            var products = Enumerable.Repeat(CreateProductApple(), count).ToArray();
-            var totalPriceWithoutDiscount = ApplePrice * count;
+            var products = Enumerable.Repeat(Apple, count).ToArray();
             var bill = CreateBillFromProducts(products);
 
             var mockedRepository = Substitute.For<IProductRepository>();
@@ -95,7 +89,7 @@ namespace Checkout.Domain.Tests
             bill = bill.ApplyDiscounts(new Discounter(mockedRepository));
 
             // Assert
-            ExtractFirstDecimalFromText(LastLineOf(bill.PrintableText)).Should().BeLessThan(totalPriceWithoutDiscount);
+            bill.TotalPrice.Should().BeLessThan(bill.NoDiscountTotalPrice);
         }
 
         [TestMethod]
@@ -103,8 +97,7 @@ namespace Checkout.Domain.Tests
         {
             // Arrange
             var bill = Bill.EmptyBill;
-            var productPear = CreateProductPear();
-            Action cancelAction = () => bill.CancelOne(productPear);
+            Action cancelAction = () => bill.CancelOne(Pear);
 
             // Act & Assert
             cancelAction.Should().Throw<BoughtProductNotFoundException>();
@@ -114,41 +107,16 @@ namespace Checkout.Domain.Tests
         public void CancelOne_ShouldRemoveOneProductFromBill()
         {
             // Arrange
-            var expectedBill = CreateBillFromProducts(
-                CreateProductApple(),
-                CreateProductWalnut(),
-                CreateProductPear(),
-                CreateProductApple()
-            );
-
-            var bill = CreateBillFromProducts(
-                CreateProductApple(),
-                CreateProductPear(),
-                CreateProductWalnut(),
-                CreateProductPear(),
-                CreateProductApple());
+            var bill = CreateBillFromProducts(Apple, Pear, Walnut, Pear, Apple);
+            var expectedBill = CreateBillFromProducts(Apple, Walnut, Pear, Apple);
 
             // Act
-            bill = bill.CancelOne(CreateProductPear());
+            bill = bill.CancelOne(Pear);
 
             // Assert
             bill.Should().Be(expectedBill);
         }
 
-        private static Product CreateProductPear() => new Product(PearName, PearPrice);
-        private static Product CreateProductApple() => new Product("apple", ApplePrice);
-        private static Product CreateProductWalnut() => new Product("walnut", WalnutPrice);
-
         private static Bill CreateBillFromProducts(params Product[] products) => products.Aggregate(Bill.EmptyBill, (b, p) => b.AddOne(p));
-
-        private static string LastLineOf(string text) => text.Split(Environment.NewLine).Last();
-
-        // https://stackoverflow.com/questions/4734116/find-and-extract-a-number-from-a-string
-        private static decimal ExtractFirstDecimalFromText(string text)
-        {
-            var extractedString = Regex.Match(text, @"\d+\.\d+").Value;
-            extractedString.Should().NotBeNullOrWhiteSpace();
-            return decimal.Parse(extractedString, CultureInfo.InvariantCulture);
-        }
     }
 }

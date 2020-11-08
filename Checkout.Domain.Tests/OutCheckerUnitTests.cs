@@ -96,41 +96,9 @@ namespace Checkout.Domain.Tests
             var bill = outChecker.ShowBill();
 
             // Assert
-            Console.WriteLine(bill.PrintableText);
-            bill.PrintableText.Should().NotBeEquivalentTo(Bill.EmptyBill.PrintableText);
-            bill.PrintableText.Should().NotBeEquivalentTo(Bill.NoBill.PrintableText);
-        }
-
-        [TestMethod]
-        public void ShowBill_ShouldContainDashedLine()
-        {
-            // Arrange
-            var outChecker = CreateDefaultOutChecker();
-            outChecker.Start();
-            outChecker.Scan(ValidBarCode);
-
-            // Act
-            var bill = outChecker.ShowBill();
-
-            // Assert
-            Console.WriteLine(bill.PrintableText);
-            bill.PrintableText.Should().Contain("-------------");
-        }
-
-        [TestMethod]
-        public void ShowBill_ShouldContainSummaryLine()
-        {
-            // Arrange
-            var outChecker = CreateDefaultOutChecker();
-            outChecker.Start();
-            outChecker.Scan(ValidBarCode);
-
-            // Act
-            var bill = outChecker.ShowBill();
-
-            // Assert
-            Console.WriteLine(bill.PrintableText);
-            bill.PrintableText.Should().Contain("TOTAL");
+            Console.WriteLine(bill);
+            bill.Should().NotBeEquivalentTo(Bill.EmptyBill);
+            bill.Should().NotBeEquivalentTo(Bill.NoBill);
         }
 
         [TestMethod]

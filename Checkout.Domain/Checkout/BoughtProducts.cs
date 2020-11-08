@@ -44,7 +44,13 @@ namespace Checkout.Domain.Checkout
             return new BoughtProducts(products);
         }
 
-        internal Product LastAddedProduct => _products.Last();
+        internal Product LastAddedProduct =>
+            this switch
+            {
+                { } products when products == Undefined => Product.NoProduct,
+                { } products when products == NoProducts => Product.NoProduct,
+                _ => _products.Last()
+            };
 
         protected override IList<object> EqualityComponents => new List<object>(_products);
     }
