@@ -43,5 +43,6 @@ namespace Checkout.AppService
         public Product GetLastAdded() => _outChecker.ShowBill().LastAddedProduct;
 
         public bool CanStart => _outChecker.CanStart;
+        public bool CanClose => _outChecker.CanClose;
     }
 }

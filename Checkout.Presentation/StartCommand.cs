@@ -2,7 +2,7 @@
 
 namespace Checkout.Presentation
 {
-    public class StartCommand : ICommand
+    public sealed class StartCommand : ICommand
     {
         private readonly IPresenter _presenter;
         private readonly ICheckoutService _service;

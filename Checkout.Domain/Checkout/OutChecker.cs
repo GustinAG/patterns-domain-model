@@ -23,7 +23,7 @@ namespace Checkout.Domain.Checkout
             _repository = repository;
         }
 
-        public bool CanStart => _state == ProcessState.NotStartedYet;
+        public bool CanStart => _state == ProcessState.NotStartedYet || _state == ProcessState.Closed;
 
         /// <summary>
         /// Starts the checkout process.
@@ -80,9 +80,11 @@ namespace Checkout.Domain.Checkout
         public delegate void CheckoutLimitExceededDelegate(CheckoutLimit limit, decimal currentPrice);
         public event CheckoutLimitExceededDelegate CheckoutLimitExceeded;
 
+        public bool CanClose => _state == ProcessState.InProgress;
+
         public void Close()
         {
-            Guard.Operation(_state == ProcessState.InProgress, $"You cannot close the checkout process when {_state}");
+            Guard.Operation(CanClose, $"You cannot close the checkout process when {_state}");
             _bill = _bill.ApplyDiscounts(new Discounter(_repository));
             _state = ProcessState.Closed;
         }

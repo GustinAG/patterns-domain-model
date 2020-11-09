@@ -32,10 +32,14 @@ namespace Checkout.Gui
             var startCommand = scope.Resolve<StartCommand>();
             StartButton.Enabled = startCommand.CanExecute;
 
+            var stopCommand = scope.Resolve<StopCommand>();
+            StopButton.Enabled = stopCommand.CanExecute;
+
             var service = scope.Resolve<ICheckoutService>();
             var bill = service.GetCurrentBill();
             var appearance = new BillAppearance(bill);
             BillTextBox.Text = appearance.AsText;
+            BillTextBox.SelectionStart = BillTextBox.SelectionLength = 0;
             LastScannedLabel.Text = appearance.LastAddedProductAsText;
         }
 
@@ -44,6 +48,13 @@ namespace Checkout.Gui
             using var scope = _container.BeginLifetimeScope();
             var startCommand = scope.Resolve<StartCommand>();
             _invoker.Invoke(startCommand);
+        }
+
+        private void StopButton_Click(object sender, EventArgs e)
+        {
+            using var scope = _container.BeginLifetimeScope();
+            var stopCommand = scope.Resolve<StopCommand>();
+            _invoker.Invoke(stopCommand);
         }
     }
 }

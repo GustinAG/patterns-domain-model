@@ -17,6 +17,7 @@ namespace Checkout.Presentation
 
             // Presentation:
             builder.RegisterType<StartCommand>().AsSelf();
+            builder.RegisterType<StopCommand>().AsSelf();
 
             // Service:
             builder.RegisterType<CheckoutService>().As<ICheckoutService>().SingleInstance();

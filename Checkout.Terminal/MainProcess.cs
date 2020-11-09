@@ -1,17 +1,13 @@
-﻿using Checkout.Contracts;
-
-namespace Checkout.Terminal
+﻿namespace Checkout.Terminal
 {
     internal class MainProcess
     {
-        private readonly ICheckoutService _service;
         private readonly BillPresenter _presenter;
         private readonly ICommandReader _commandReader;
         private readonly CommandProcessor _processor;
 
-        public MainProcess(ICheckoutService service, BillPresenter presenter, ICommandReader commandReader, CommandProcessor processor)
+        public MainProcess(BillPresenter presenter, ICommandReader commandReader, CommandProcessor processor)
         {
-            _service = service;
             _presenter = presenter;
             _commandReader = commandReader;
             _processor = processor;
@@ -29,7 +25,7 @@ namespace Checkout.Terminal
                 _processor.Process(code);
             } while (code != CommandCode.Exit);
 
-            _service.Close();
+            _processor.Stop();
             _presenter.ShowClosedBill();
         }
     }

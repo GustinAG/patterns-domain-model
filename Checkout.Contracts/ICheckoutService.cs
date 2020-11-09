@@ -14,5 +14,6 @@ namespace Checkout.Contracts
         Bill GetCurrentBill();
         Product GetLastAdded();
         bool CanStart { get; }
+        bool CanClose { get; }
     }
 }

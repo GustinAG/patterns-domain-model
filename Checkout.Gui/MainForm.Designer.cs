@@ -108,6 +108,7 @@
             this.StopButton.TabIndex = 2;
             this.StopButton.Text = "Stop";
             this.StopButton.UseVisualStyleBackColor = false;
+            this.StopButton.Click += new System.EventHandler(this.StopButton_Click);
             // 
             // BillTextBox
             // 
