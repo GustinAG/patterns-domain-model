@@ -84,6 +84,29 @@ namespace Checkout.Domain.Tests
         }
 
         [TestMethod]
+        public void Cancel_ShouldRemoveAffectedDiscount()
+        {
+            // Arrange
+            var outChecker = CreateOutChecker();
+            outChecker.Start();
+            outChecker.Scan(ValidBarCode);
+            outChecker.Scan(ValidBarCode);
+            outChecker.Scan(ValidBarCode);
+            outChecker.Scan(ValidBarCode);
+
+            var bill = outChecker.ShowBill();
+            bill.TotalPrice.Should().BeLessThan(bill.NoDiscountTotalPrice);
+
+            // Act
+            outChecker.Cancel(ValidBarCode);
+
+            // Assert
+            bill = outChecker.ShowBill();
+            Console.WriteLine(bill);
+            bill.TotalPrice.Should().Be(bill.NoDiscountTotalPrice);
+        }
+
+        [TestMethod]
         public void ShowBill_ShouldGiveNoBill_WhenCheckoutNotStartedYet()
         {
             // Arrange

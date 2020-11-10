@@ -16,6 +16,7 @@ namespace Checkout.Domain.Checkout
     {
         private readonly IProductRepository _repository;
         private readonly IDomainEventCollector _eventCollector;
+        private readonly Discounter _discounter;
         private ProcessState _state = ProcessState.NotStartedYet;
         private Bill _bill = Bill.NoBill;
         private CheckoutLimit _limit = CheckoutLimit.NoLimit;
@@ -24,6 +25,7 @@ namespace Checkout.Domain.Checkout
         {
             _repository = repository;
             _eventCollector = eventCollector;
+            _discounter = new Discounter(_repository);
         }
 
         public bool CanStart => _state == ProcessState.NotStartedYet || _state == ProcessState.Closed;
@@ -50,6 +52,7 @@ namespace Checkout.Domain.Checkout
             if (product == Product.NoProduct) throw new InvalidBarCodeException(barCode);
 
             _bill = _bill.AddOne(product);
+            _bill = _bill.ApplyDiscounts(_discounter);
 
             CheckIfLimitExceeded();
         }
@@ -67,6 +70,7 @@ namespace Checkout.Domain.Checkout
             if (product == Product.NoProduct) throw new InvalidBarCodeException(barCode);
 
             _bill = _bill.CancelOne(product);
+            _bill = _bill.ApplyDiscounts(_discounter);
         }
 
         public bool CanSetUpLimit => _state == ProcessState.InProgress;
@@ -84,7 +88,6 @@ namespace Checkout.Domain.Checkout
         public void Close()
         {
             Guard.Operation(CanClose, $"You cannot close the checkout process when {_state}");
-            _bill = _bill.ApplyDiscounts(new Discounter(_repository));
             _state = ProcessState.Closed;
         }
 
