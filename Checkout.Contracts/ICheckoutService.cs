@@ -15,5 +15,6 @@ namespace Checkout.Contracts
         bool CanScan { get; }
         bool CanClose { get; }
         bool CanCancel { get; }
+        bool CanSetUpLimit { get; }
     }
 }

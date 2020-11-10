@@ -40,13 +40,18 @@ namespace Checkout.AppService
 
         public void Close() => _outChecker.Close();
 
-        public void SetUpLimit(decimal limit) => _outChecker.SetUpLimit(new CheckoutLimit(limit));
+        public void SetUpLimit(decimal limit)
+        {
+            _outChecker.SetUpLimit(new CheckoutLimit(limit));
+            _eventRegistry.PlayAll();
+        }
 
         public Bill GetCurrentBill() => _outChecker.ShowBill();
 
         public bool CanStart => _outChecker.CanStart;
         public bool CanScan => _outChecker.CanScan;
         public bool CanCancel => _outChecker.CanCancel;
+        public bool CanSetUpLimit => _outChecker.CanSetUpLimit;
         public bool CanClose => _outChecker.CanClose;
     }
 }

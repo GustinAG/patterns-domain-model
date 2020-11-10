@@ -22,8 +22,10 @@ namespace Checkout.Gui
             EnableControlBasedOnCommand<StartCommand>(StartButton);
             EnableControlBasedOnCommand<StopCommand>(StopButton);
             EnableControlBasedOnCommand<ScanCommand>(ScanButton);
-            EnableControlBasedOnCommand<CancelCommand>(CancelItemButton);
             EnableControlBasedOnCommand<ScanCommand>(BarCodeTextBox);
+            EnableControlBasedOnCommand<CancelCommand>(CancelItemButton);
+            EnableControlBasedOnCommand<SetLimitCommand>(LimitUpDown);
+            EnableControlBasedOnCommand<SetLimitCommand>(SetLimitButton);
             RefreshTexts(appearance);
         }
 
@@ -42,6 +44,8 @@ namespace Checkout.Gui
         private void ScanButton_Click(object sender, EventArgs e) => InvokeCommand<ScanCommand>(c => c.Code = BarCodeTextBox.Text);
 
         private void CancelItemButton_Click(object sender, EventArgs e) => InvokeCommand<CancelCommand>(c => c.Code = BarCodeTextBox.Text);
+
+        private void SetLimitButton_Click(object sender, EventArgs e) => InvokeCommand<SetLimitCommand>(c => c.Limit = LimitUpDown.Value);
 
         private void EnableControlBasedOnCommand<T>(Control control) where T : ICommand
         {

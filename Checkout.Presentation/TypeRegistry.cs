@@ -21,6 +21,7 @@ namespace Checkout.Presentation
             builder.RegisterType<StartCommand>().AsSelf();
             builder.RegisterType<ScanCommand>().AsSelf();
             builder.RegisterType<CancelCommand>().AsSelf();
+            builder.RegisterType<SetLimitCommand>().AsSelf();
             builder.RegisterType<StopCommand>().AsSelf();
 
             // Service:

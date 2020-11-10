@@ -1,5 +1,4 @@
-﻿using Checkout.Contracts;
-using Checkout.Presentation;
+﻿using Checkout.Presentation;
 
 namespace Checkout.Terminal
 {
@@ -10,18 +9,18 @@ namespace Checkout.Terminal
         private readonly StartCommand _startCommand;
         private readonly ScanCommand _scanCommand;
         private readonly CancelCommand _cancelCommand;
+        private readonly SetLimitCommand _setLimitCommand;
         private readonly StopCommand _stopCommand;
-        private readonly ICheckoutService _service;
 
-        public CommandProcessor(ICommandReader commandReader, Invoker invoker, StartCommand startCommand, ScanCommand scanCommand, CancelCommand cancelCommand, StopCommand stopCommand, ICheckoutService service)
+        public CommandProcessor(ICommandReader commandReader, Invoker invoker, StartCommand startCommand, ScanCommand scanCommand, CancelCommand cancelCommand, SetLimitCommand setLimitCommand, StopCommand stopCommand)
         {
             _commandReader = commandReader;
             _invoker = invoker;
             _startCommand = startCommand;
             _scanCommand = scanCommand;
             _cancelCommand = cancelCommand;
+            _setLimitCommand = setLimitCommand;
             _stopCommand = stopCommand;
-            _service = service;
         }
 
         internal void Start() => _invoker.Invoke(_startCommand);
@@ -34,7 +33,8 @@ namespace Checkout.Terminal
                     _invoker.Invoke(_stopCommand);
                     break;
                 case CommandCode.Limit:
-                    SetUpPriceLimit();
+                    _setLimitCommand.Limit = _commandReader.ReadPriceLimit();
+                    _invoker.Invoke(_setLimitCommand);
                     break;
                 case CommandCode.Cancel:
                     _cancelCommand.Code = _commandReader.ReadCancelBarCode();
@@ -45,12 +45,6 @@ namespace Checkout.Terminal
                     _invoker.Invoke(_scanCommand);
                     break;
             }
-        }
-
-        private void SetUpPriceLimit()
-        {
-            var limit = _commandReader.ReadPriceLimit();
-            _service.SetUpLimit(limit);
         }
     }
 }

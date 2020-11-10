@@ -69,9 +69,11 @@ namespace Checkout.Domain.Checkout
             _bill = _bill.CancelOne(product);
         }
 
+        public bool CanSetUpLimit => _state == ProcessState.InProgress;
+
         public void SetUpLimit(CheckoutLimit limit)
         {
-            Guard.Operation(_state == ProcessState.InProgress, $"You can only cancel items when checkout process {ProcessState.InProgress}");
+            Guard.Operation(CanSetUpLimit, $"You can only cancel items when checkout process {ProcessState.InProgress}");
 
             _limit = limit;
             CheckIfLimitExceeded();
