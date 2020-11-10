@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.splitter1 = new System.Windows.Forms.Splitter();
             this.BarCodeTextBox = new System.Windows.Forms.TextBox();
             this.StartButton = new System.Windows.Forms.Button();
             this.ScanButton = new System.Windows.Forms.Button();
@@ -37,15 +36,8 @@
             this.StopButton = new System.Windows.Forms.Button();
             this.BillTextBox = new System.Windows.Forms.TextBox();
             this.LastScannedLabel = new System.Windows.Forms.Label();
+            this.MessageLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // splitter1
-            // 
-            this.splitter1.Location = new System.Drawing.Point(0, 0);
-            this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(520, 677);
-            this.splitter1.TabIndex = 0;
-            this.splitter1.TabStop = false;
             // 
             // BarCodeTextBox
             // 
@@ -134,11 +126,23 @@
             this.LastScannedLabel.TabIndex = 4;
             this.LastScannedLabel.Text = " -";
             // 
+            // MessageLabel
+            // 
+            this.MessageLabel.AutoSize = true;
+            this.MessageLabel.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.MessageLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.MessageLabel.Location = new System.Drawing.Point(12, 668);
+            this.MessageLabel.Name = "MessageLabel";
+            this.MessageLabel.Size = new System.Drawing.Size(22, 21);
+            this.MessageLabel.TabIndex = 4;
+            this.MessageLabel.Text = "   ";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1075, 677);
+            this.ClientSize = new System.Drawing.Size(1075, 699);
+            this.Controls.Add(this.MessageLabel);
             this.Controls.Add(this.LastScannedLabel);
             this.Controls.Add(this.BillTextBox);
             this.Controls.Add(this.StopButton);
@@ -146,7 +150,6 @@
             this.Controls.Add(this.ScanButton);
             this.Controls.Add(this.StartButton);
             this.Controls.Add(this.BarCodeTextBox);
-            this.Controls.Add(this.splitter1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.Text = "Checkout";
@@ -157,8 +160,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Splitter splitter1;
         private System.Windows.Forms.TextBox BarCodeTextBox;
         private System.Windows.Forms.Button StartButton;
         private System.Windows.Forms.Button ScanButton;
@@ -166,6 +167,7 @@
         private System.Windows.Forms.Button StopButton;
         private System.Windows.Forms.TextBox BillTextBox;
         private System.Windows.Forms.Label LastScannedLabel;
+        private System.Windows.Forms.Label MessageLabel;
     }
 }
 

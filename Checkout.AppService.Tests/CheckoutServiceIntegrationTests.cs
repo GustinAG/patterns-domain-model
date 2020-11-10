@@ -1,7 +1,7 @@
 ﻿using System;
 using Checkout.Domain.Checkout;
 using Checkout.Domain.Products;
-using Checkout.Repositories;
+using Checkout.Infrastructure;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -14,9 +14,12 @@ namespace Checkout.AppService.Tests
         private const string TestProductName = "Test Product";
         private const string ValidCode = "1234";
         private const string InvalidCode = "000";
+        private const decimal Limit = 1M;
 
-        private static readonly Action<decimal, decimal> EmptyAction = (a, b) => { };
         private static readonly Product TestProduct = new Product(TestProductName, 0.98M);
+
+        private int _limitExceededCount;
+        private decimal _exceededLimit;
 
         [TestMethod]
         public void Start_ShouldProduceEmptyBill()
@@ -25,7 +28,7 @@ namespace Checkout.AppService.Tests
             var service = CreateService();
 
             // Act
-            service.Start(EmptyAction);
+            service.Start();
 
             // Assert
             var currentBill = service.GetCurrentBill();
@@ -38,7 +41,7 @@ namespace Checkout.AppService.Tests
         {
             // Arrange
             var service = CreateService();
-            service.Start(EmptyAction);
+            service.Start();
 
             // Act
             service.Scan(ValidCode);
@@ -66,11 +69,11 @@ namespace Checkout.AppService.Tests
         }
 
         [TestMethod]
-        public void Scan_ShouldProduceTOneGroup_WhenSameProductScanned()
+        public void Scan_ShouldProduceOneGroup_WhenSameProductScanned()
         {
             // Arrange
             var service = CreateService();
-            service.Start(EmptyAction);
+            service.Start();
 
             // Act
             service.Scan(ValidCode);
@@ -89,7 +92,7 @@ namespace Checkout.AppService.Tests
             // Arrange
             var service = CreateService(false);
             Action scanAction = () => service.Scan(InvalidCode);
-            service.Start(EmptyAction);
+            service.Start();
 
             // Act & Assert
             scanAction.Should().Throw<InvalidBarCodeException>();
@@ -101,17 +104,68 @@ namespace Checkout.AppService.Tests
             // Arrange
             var service = CreateService();
             Action scanAction = () => service.Scan(ValidCode);
-            service.Start(EmptyAction);
+            service.Start();
             service.Close();
 
             // Act & Assert
             scanAction.Should().Throw<InvalidOperationException>();
         }
 
+        [TestMethod]
+        public void Scan_ShouldCallLimitExceededActionWithPresetLimit()
+        {
+            // Arrange
+            var service = CreateService();
+            service.Start(TrackLimitExceededCalls);
+            service.SetUpLimit(Limit);
+
+            // Act
+            service.Scan(ValidCode);
+            service.Scan(ValidCode);
+
+            // Assert
+            _limitExceededCount.Should().Be(1);
+            _exceededLimit.Should().Be(Limit);
+        }
+
+        [TestMethod]
+        public void Scan_ShouldNotCallLimitExceededAction_WhenUnderPresetLimit()
+        {
+            // Arrange
+            var service = CreateService();
+            service.Start(TrackLimitExceededCalls);
+            service.SetUpLimit(Limit);
+
+            // Act
+            service.Scan(ValidCode);
+
+            // Assert
+            _limitExceededCount.Should().Be(0);
+        }
+
+        [TestMethod]
+        public void Scan_ShouldCallLimitExceededActionTwice_WhenOccursTwice()
+        {
+            // Arrange
+            var service = CreateService();
+            service.Start(TrackLimitExceededCalls);
+            service.SetUpLimit(Limit);
+
+            // Act
+            service.Scan(ValidCode);
+            service.Scan(ValidCode);
+            service.Scan(ValidCode);
+
+            // Assert
+            _limitExceededCount.Should().Be(2);
+            _exceededLimit.Should().Be(Limit);
+        }
+
         private static CheckoutService CreateService(bool mockRepository = true)
         {
+            var events = new DomainEvents();
             var repository = mockRepository ? CreateMockedRepository() : new ProductRepository();
-            return new CheckoutService(new OutChecker(repository));
+            return new CheckoutService(events, new OutChecker(repository, events));
         }
 
         private static IProductRepository CreateMockedRepository()
@@ -122,6 +176,12 @@ namespace Checkout.AppService.Tests
             repository.FindBy(Arg.Any<string>()).Returns(Product.NoProduct);
 
             return repository;
+        }
+
+        private void TrackLimitExceededCalls(CheckoutLimitExceeded e)
+        {
+            _limitExceededCount++;
+            _exceededLimit = e.Limit.Limit;
         }
     }
 }

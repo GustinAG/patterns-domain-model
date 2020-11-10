@@ -2,9 +2,10 @@
 using Autofac;
 using Checkout.AppService;
 using Checkout.Contracts;
+using Checkout.Domain;
 using Checkout.Domain.Checkout;
 using Checkout.Domain.Products;
-using Checkout.Repositories;
+using Checkout.Infrastructure;
 
 namespace Checkout.Presentation
 {
@@ -30,6 +31,7 @@ namespace Checkout.Presentation
 
             // Infrastructure:
             builder.RegisterType<ProductRepository>().As<IProductRepository>();
+            builder.RegisterType<DomainEvents>().As<IDomainEventRegistry>().As<IDomainEventCollector>().InstancePerLifetimeScope();
 
             // Additional:
             additionalRegistrationsAction?.Invoke(builder);

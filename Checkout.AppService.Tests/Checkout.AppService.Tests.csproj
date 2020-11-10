@@ -28,7 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Checkout.AppService\Checkout.AppService.csproj" />
-    <ProjectReference Include="..\Checkout.Repositories\Checkout.Repositories.csproj" />
+    <ProjectReference Include="..\Checkout.Infrastructure\Checkout.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,7 +3,7 @@ using Checkout.Domain.Products;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Checkout.Repositories.Tests
+namespace Checkout.Infrastructure.Tests
 {
     [TestClass]
     public class ProductRepositoryIntegrationTests

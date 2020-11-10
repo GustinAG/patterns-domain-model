@@ -16,7 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Checkout.AppService\Checkout.AppService.csproj" />
     <ProjectReference Include="..\Checkout.Presentation\Checkout.Presentation.csproj" />
-    <ProjectReference Include="..\Checkout.Repositories\Checkout.Repositories.csproj" />
+    <ProjectReference Include="..\Checkout.Repositories\Checkout.Infrastructure.csproj" />
   </ItemGroup>
 
   <!-- https://stackoverflow.com/questions/42810705/visual-studio-2017-and-the-new-csproj-internalsvisibleto -->

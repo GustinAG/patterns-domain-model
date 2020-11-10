@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Checkout.Contracts\Checkout.Contracts.csproj" />
     <ProjectReference Include="..\Checkout.Domain\Checkout.Domain.csproj" />
+    <ProjectReference Include="..\Checkout.Infrastructure\Checkout.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

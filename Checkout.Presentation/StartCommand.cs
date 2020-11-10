@@ -1,17 +1,18 @@
 ﻿using System;
 using Checkout.Contracts;
+using Checkout.Domain.Checkout;
 
 namespace Checkout.Presentation
 {
     public sealed class StartCommand : ICommand
     {
         private readonly ICheckoutService _service;
-        private readonly Action<decimal, decimal> _limitExceededAction;
+        private readonly Action<CheckoutLimitExceeded> _limitExceededAction;
 
         public StartCommand(IPresenter presenter, ICheckoutService service)
         {
             _service = service;
-            _limitExceededAction = (l, p) => presenter.ShowWarning($"Warning: Your limit has been exceeded (limit: € {l}, current price: € {p})");
+            _limitExceededAction = e => presenter.ShowWarning($"Warning: Your limit has been exceeded (limit: € {e.Limit}, current price: € {e.Price})");
         }
 
         public bool CanExecute => _service.CanStart;

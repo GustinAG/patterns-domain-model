@@ -25,9 +25,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - Service", "2 - Service"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Infrastructure", "4 - Infrastructure", "{5CDCF901-115F-4479-AC44-56623DA31F27}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Checkout.Repositories", "Checkout.Repositories\Checkout.Repositories.csproj", "{21E8FE1F-5387-4F27-9A1A-5F2B40FA75F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Checkout.Infrastructure", "Checkout.Infrastructure\Checkout.Infrastructure.csproj", "{21E8FE1F-5387-4F27-9A1A-5F2B40FA75F9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Checkout.Repositories.Tests", "Checkout.Repositories.Tests\Checkout.Repositories.Tests.csproj", "{F4C5AB40-CA8B-46BF-BA0A-2C48C76CAD53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Checkout.Infrastructure.Tests", "Checkout.Infrastructure.Tests\Checkout.Infrastructure.Tests.csproj", "{F4C5AB40-CA8B-46BF-BA0A-2C48C76CAD53}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Presentation", "1 - Presentation", "{0AAF6CCF-FD7D-45DE-8EF7-2BF829B04BBD}"
 EndProject
@@ -45,7 +45,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Checkout.Gui", "Checkout.Gu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Checkout.Presentation", "Checkout.Presentation\Checkout.Presentation.csproj", "{D4A03144-EA4B-40ED-BFA1-1CF251A18188}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Checkout.Presentation.Tests", "Checkout.Presentation.Tests\Checkout.Presentation.Tests.csproj", "{B5645E7E-CBAF-4695-A655-7E657E90C13A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Checkout.Presentation.Tests", "Checkout.Presentation.Tests\Checkout.Presentation.Tests.csproj", "{B5645E7E-CBAF-4695-A655-7E657E90C13A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

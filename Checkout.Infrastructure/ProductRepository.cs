@@ -3,7 +3,7 @@ using System.Linq;
 using Checkout.Domain.Products;
 using Dawn;
 
-namespace Checkout.Repositories
+namespace Checkout.Infrastructure
 {
     // TODO: Real implementation with MongoDB  e.g.!
     /// <summary>

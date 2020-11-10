@@ -15,13 +15,15 @@ namespace Checkout.Domain.Checkout
     public sealed class OutChecker
     {
         private readonly IProductRepository _repository;
+        private readonly IDomainEventCollector _eventCollector;
         private ProcessState _state = ProcessState.NotStartedYet;
         private Bill _bill = Bill.NoBill;
         private CheckoutLimit _limit = CheckoutLimit.NoLimit;
 
-        public OutChecker(IProductRepository repository)
+        public OutChecker(IProductRepository repository, IDomainEventCollector eventCollector)
         {
             _repository = repository;
+            _eventCollector = eventCollector;
         }
 
         public bool CanStart => _state == ProcessState.NotStartedYet || _state == ProcessState.Closed;
@@ -77,13 +79,10 @@ namespace Checkout.Domain.Checkout
 
         private void CheckIfLimitExceeded()
         {
-            // TODO: introduce domain event instead!
-            if (_limit.IsExceededBy(_bill.NoDiscountTotalPrice)) CheckoutLimitExceeded?.Invoke(_limit, _bill.NoDiscountTotalPrice);
+            if (_limit.IsExceededBy(_bill.NoDiscountTotalPrice)) _eventCollector.Raise(new CheckoutLimitExceeded(_limit, _bill.TotalPrice));
         }
 
         public Bill ShowBill() => _bill;
-        public delegate void CheckoutLimitExceededDelegate(CheckoutLimit limit, decimal currentPrice);
-        public event CheckoutLimitExceededDelegate CheckoutLimitExceeded;
 
         public bool CanClose => _state == ProcessState.InProgress;
 

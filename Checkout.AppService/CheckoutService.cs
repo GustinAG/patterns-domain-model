@@ -2,23 +2,26 @@
 using Checkout.Contracts;
 using Checkout.Domain.Checkout;
 using Checkout.Domain.Products;
+using Checkout.Infrastructure;
 using Dawn;
 
 namespace Checkout.AppService
 {
     public class CheckoutService : ICheckoutService
     {
+        private readonly IDomainEventRegistry _eventRegistry;
         private readonly OutChecker _outChecker;
 
-        public CheckoutService(OutChecker outChecker)
+        public CheckoutService(IDomainEventRegistry eventRegistry, OutChecker outChecker)
         {
             Guard.Operation(outChecker != null);
+            _eventRegistry = eventRegistry;
             _outChecker = outChecker;
         }
 
-        public void Start(Action<decimal, decimal> limitExceededAction = null)
+        public void Start(Action<CheckoutLimitExceeded> limitExceededAction = null)
         {
-            _outChecker.CheckoutLimitExceeded += (l, p) => limitExceededAction?.Invoke(l.Limit, p);
+            if (limitExceededAction != null) _eventRegistry.Register(limitExceededAction);
             _outChecker.Start();
         }
 
@@ -26,6 +29,7 @@ namespace Checkout.AppService
         {
             var barCode = new BarCode(code);
             _outChecker.Scan(barCode);
+            _eventRegistry.PlayAll();
         }
 
         public void Cancel(string code)

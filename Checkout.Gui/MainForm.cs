@@ -27,13 +27,9 @@ namespace Checkout.Gui
             RefreshTexts(appearance);
         }
 
-        public void ShowWarning(string message)
-        {
-        }
+        public void ShowWarning(string message) => MessageLabel.Text = message;
 
-        public void ShowError(string message)
-        {
-        }
+        public void ShowError(string message) => MessageLabel.Text = message;
 
         private void RegisterThis(ContainerBuilder builder) => builder.RegisterInstance(this).As<IPresenter>();
 
@@ -56,6 +52,8 @@ namespace Checkout.Gui
 
         private void InvokeCommand<T>(Action<T> customAction = null) where T : ICommand
         {
+            MessageLabel.Text = string.Empty;
+
             using var scope = _container.BeginLifetimeScope();
             var invoker = scope.Resolve<Invoker>();
             var command = scope.Resolve<T>();
