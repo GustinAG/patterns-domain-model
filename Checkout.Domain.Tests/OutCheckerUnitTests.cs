@@ -14,31 +14,37 @@ namespace Checkout.Domain.Tests
         private static readonly BarCode InvalidBarCode = new BarCode("000");
 
         [TestMethod]
-        public void Start_ShouldRunWithoutException()
+        public void Start_ShouldAllowScan()
         {
             // Arrange
-            var outChecker = CreateDefaultOutChecker();
+            var outChecker = CreateOutChecker();
 
             // Act
             outChecker.Start();
+
+            // Assert
+            outChecker.CanScan.Should().BeTrue();
         }
 
         [TestMethod]
-        public void Scan_ShouldRunWithoutException()
+        public void Scan_ShouldAllowCancel()
         {
             // Arrange
-            var outChecker = CreateDefaultOutChecker();
+            var outChecker = CreateOutChecker();
             outChecker.Start();
 
             // Act
             outChecker.Scan(ValidBarCode);
+
+            // Assert
+            outChecker.CanCancel.Should().BeTrue();
         }
 
         [TestMethod]
         public void Scan_ShouldThrowException_WhenCheckoutNotStartedYet()
         {
             // Arrange
-            var outChecker = CreateDefaultOutChecker();
+            var outChecker = CreateOutChecker();
             Action scanAction = () => outChecker.Scan(ValidBarCode);
 
             // Act & Assert
@@ -46,10 +52,10 @@ namespace Checkout.Domain.Tests
         }
 
         [TestMethod]
-        public void Scan_ShouldThrowExceptionForInvalidBarCode()
+        public void Scan_ShouldThrowException_WhenInvalidBarCode()
         {
             // Arrange
-            var outChecker = CreateDefaultOutChecker();
+            var outChecker = CreateOutChecker();
             Action scanAction = () => outChecker.Scan(InvalidBarCode);
             outChecker.Start();
 
@@ -58,10 +64,30 @@ namespace Checkout.Domain.Tests
         }
 
         [TestMethod]
+        public void Scan_ShouldProduceLowerTotalPrice_WhenDiscountApplies()
+        {
+            // Arrange
+            var outChecker = CreateOutChecker();
+            outChecker.Start();
+
+            // Act
+            outChecker.Scan(ValidBarCode);
+            outChecker.Scan(ValidBarCode);
+            outChecker.Scan(ValidBarCode);
+            outChecker.Scan(ValidBarCode);
+            outChecker.Scan(ValidBarCode);
+
+            // Assert
+            var bill = outChecker.ShowBill();
+            Console.WriteLine(bill);
+            bill.TotalPrice.Should().BeLessThan(bill.NoDiscountTotalPrice);
+        }
+
+        [TestMethod]
         public void ShowBill_ShouldGiveNoBill_WhenCheckoutNotStartedYet()
         {
             // Arrange
-            var outChecker = CreateDefaultOutChecker();
+            var outChecker = CreateOutChecker();
 
             // Act
             var bill = outChecker.ShowBill();
@@ -74,7 +100,7 @@ namespace Checkout.Domain.Tests
         public void ShowBill_ShouldGiveEmptyBill_WhenNothingScannedYet()
         {
             // Arrange
-            var outChecker = CreateDefaultOutChecker();
+            var outChecker = CreateOutChecker();
             outChecker.Start();
 
             // Act
@@ -88,7 +114,7 @@ namespace Checkout.Domain.Tests
         public void ShowBill_ShouldBeDifferent_WhenSomethingScanned()
         {
             // Arrange
-            var outChecker = CreateDefaultOutChecker();
+            var outChecker = CreateOutChecker();
             outChecker.Start();
             outChecker.Scan(ValidBarCode);
 
@@ -102,38 +128,47 @@ namespace Checkout.Domain.Tests
         }
 
         [TestMethod]
-        public void Close_ShouldRunWithoutException()
+        public void Close_ShouldDisableScan()
         {
             // Arrange
-            var outChecker = CreateDefaultOutChecker();
+            var outChecker = CreateOutChecker();
             outChecker.Start();
             outChecker.Scan(ValidBarCode);
 
             // Act
             outChecker.Close();
+
+            // Assert
+            outChecker.CanScan.Should().BeFalse();
         }
 
         [TestMethod]
         public void Close_ShouldThrowException_WhenCheckoutNotStartedYet()
         {
             // Arrange
-            var outChecker = CreateDefaultOutChecker();
+            var outChecker = CreateOutChecker();
             Action closeAction = () => outChecker.Close();
 
             // Act & Assert
             closeAction.Should().Throw<InvalidOperationException>("cannot close before before start");
         }
 
-        private static OutChecker CreateDefaultOutChecker()
+        private static OutChecker CreateOutChecker()
         {
             var collector = Substitute.For<IDomainEventCollector>();
+            var repository = CreateMockedProductRepository();
+            return new OutChecker(repository, collector);
+        }
+
+        private static IProductRepository CreateMockedProductRepository()
+        {
             var repository = Substitute.For<IProductRepository>();
 
             repository.FindBy(ValidBarCode).Returns(new Product("unit-test-product", 0.89M));
             repository.FindBy(InvalidBarCode).Returns(Product.NoProduct);
             repository.FindBy(Arg.Any<string>()).Returns(Product.NoProduct);
 
-            return new OutChecker(repository, collector);
+            return repository;
         }
     }
 }

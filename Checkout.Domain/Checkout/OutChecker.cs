@@ -79,13 +79,6 @@ namespace Checkout.Domain.Checkout
             CheckIfLimitExceeded();
         }
 
-        private void CheckIfLimitExceeded()
-        {
-            if (_limit.IsExceededBy(_bill.NoDiscountTotalPrice)) _eventCollector.Raise(new CheckoutLimitExceeded(_limit, _bill.TotalPrice));
-        }
-
-        public Bill ShowBill() => _bill;
-
         public bool CanClose => _state == ProcessState.InProgress;
 
         public void Close()
@@ -93,6 +86,13 @@ namespace Checkout.Domain.Checkout
             Guard.Operation(CanClose, $"You cannot close the checkout process when {_state}");
             _bill = _bill.ApplyDiscounts(new Discounter(_repository));
             _state = ProcessState.Closed;
+        }
+
+        public Bill ShowBill() => _bill;
+
+        private void CheckIfLimitExceeded()
+        {
+            if (_limit.IsExceededBy(_bill.NoDiscountTotalPrice)) _eventCollector.Raise(new CheckoutLimitExceeded(_limit, _bill.TotalPrice));
         }
 
         private Product FindProductBy(BarCode barCode)
