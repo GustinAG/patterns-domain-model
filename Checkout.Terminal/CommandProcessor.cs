@@ -1,6 +1,4 @@
-﻿using System;
-using Checkout.Contracts;
-using Checkout.Domain.Checkout;
+﻿using Checkout.Contracts;
 using Checkout.Presentation;
 
 namespace Checkout.Terminal
@@ -8,82 +6,51 @@ namespace Checkout.Terminal
     internal sealed class CommandProcessor
     {
         private readonly ICommandReader _commandReader;
+        private readonly Invoker _invoker;
         private readonly StartCommand _startCommand;
+        private readonly ScanCommand _scanCommand;
+        private readonly CancelCommand _cancelCommand;
         private readonly StopCommand _stopCommand;
         private readonly ICheckoutService _service;
-        private readonly BillPresenter _presenter;
 
-        public CommandProcessor(ICommandReader commandReader, StartCommand startCommand, StopCommand stopCommand, ICheckoutService service, BillPresenter presenter)
+        public CommandProcessor(ICommandReader commandReader, Invoker invoker, StartCommand startCommand, ScanCommand scanCommand, CancelCommand cancelCommand, StopCommand stopCommand, ICheckoutService service)
         {
             _commandReader = commandReader;
+            _invoker = invoker;
             _startCommand = startCommand;
+            _scanCommand = scanCommand;
+            _cancelCommand = cancelCommand;
             _stopCommand = stopCommand;
             _service = service;
-            _presenter = presenter;
         }
 
-        internal void Start() => _startCommand.Execute();
-        internal void Stop() => _stopCommand.Execute();
+        internal void Start() => _invoker.Invoke(_startCommand);
 
         internal void Process(string code)
         {
             switch (code)
             {
                 case CommandCode.Exit:
-                    break;
-                case CommandCode.Show:
-                    _presenter.ShowPartialBill();
+                    _invoker.Invoke(_stopCommand);
                     break;
                 case CommandCode.Limit:
                     SetUpPriceLimit();
                     break;
                 case CommandCode.Cancel:
-                    RunWithCheckoutExceptionHandling(CancelItem);
+                    _cancelCommand.Code = _commandReader.ReadCancelBarCode();
+                    _invoker.Invoke(_cancelCommand);
                     break;
                 default:
-                    ScanItem(code);
+                    _scanCommand.Code = code;
+                    _invoker.Invoke(_scanCommand);
                     break;
             }
-        }
-
-        private void ScanItem(string code)
-        {
-            try
-            {
-                _service.Scan(code);
-                Console.WriteLine(_service.GetLastAdded());
-            }
-            catch (Exception e)
-                when (e is InvalidBarCodeException || e is BoughtProductNotFoundException)
-            {
-                Console.WriteLine(e.Message);
-            }
-        }
-
-        private void CancelItem()
-        {
-            var code = _commandReader.ReadCancelBarCode();
-            _service.Cancel(code);
-            _presenter.ShowPartialBill();
         }
 
         private void SetUpPriceLimit()
         {
             var limit = _commandReader.ReadPriceLimit();
             _service.SetUpLimit(limit);
-        }
-
-        private static void RunWithCheckoutExceptionHandling(Action action)
-        {
-            try
-            {
-                action();
-            }
-            catch (Exception e)
-                when (e is InvalidBarCodeException || e is BoughtProductNotFoundException)
-            {
-                Console.WriteLine(e.Message);
-            }
         }
     }
 }

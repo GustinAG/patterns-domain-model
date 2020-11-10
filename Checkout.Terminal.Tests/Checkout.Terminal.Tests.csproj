@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Checkout.Presentation\Checkout.Presentation.csproj" />
     <ProjectReference Include="..\Checkout.Terminal\Checkout.Terminal.csproj" />
   </ItemGroup>
 

@@ -43,7 +43,7 @@
             // 
             this.splitter1.Location = new System.Drawing.Point(0, 0);
             this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(535, 677);
+            this.splitter1.Size = new System.Drawing.Size(520, 677);
             this.splitter1.TabIndex = 0;
             this.splitter1.TabStop = false;
             // 
@@ -57,6 +57,7 @@
             this.BarCodeTextBox.Name = "BarCodeTextBox";
             this.BarCodeTextBox.Size = new System.Drawing.Size(100, 50);
             this.BarCodeTextBox.TabIndex = 1;
+            this.BarCodeTextBox.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // StartButton
             // 
@@ -65,7 +66,7 @@
             this.StartButton.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.StartButton.Location = new System.Drawing.Point(12, 12);
             this.StartButton.Name = "StartButton";
-            this.StartButton.Size = new System.Drawing.Size(203, 66);
+            this.StartButton.Size = new System.Drawing.Size(242, 66);
             this.StartButton.TabIndex = 2;
             this.StartButton.Text = "Start";
             this.StartButton.UseVisualStyleBackColor = false;
@@ -78,10 +79,11 @@
             this.ScanButton.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.ScanButton.Location = new System.Drawing.Point(118, 84);
             this.ScanButton.Name = "ScanButton";
-            this.ScanButton.Size = new System.Drawing.Size(153, 50);
+            this.ScanButton.Size = new System.Drawing.Size(241, 50);
             this.ScanButton.TabIndex = 2;
             this.ScanButton.Text = "Scan";
             this.ScanButton.UseVisualStyleBackColor = false;
+            this.ScanButton.Click += new System.EventHandler(this.ScanButton_Click);
             // 
             // CancelItemButton
             // 
@@ -89,12 +91,13 @@
             this.CancelItemButton.Enabled = false;
             this.CancelItemButton.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.CancelItemButton.ForeColor = System.Drawing.Color.Red;
-            this.CancelItemButton.Location = new System.Drawing.Point(277, 84);
+            this.CancelItemButton.Location = new System.Drawing.Point(365, 84);
             this.CancelItemButton.Name = "CancelItemButton";
             this.CancelItemButton.Size = new System.Drawing.Size(144, 50);
             this.CancelItemButton.TabIndex = 2;
             this.CancelItemButton.Text = "Cancel";
             this.CancelItemButton.UseVisualStyleBackColor = false;
+            this.CancelItemButton.Click += new System.EventHandler(this.CancelItemButton_Click);
             // 
             // StopButton
             // 
@@ -102,9 +105,9 @@
             this.StopButton.Enabled = false;
             this.StopButton.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.StopButton.ForeColor = System.Drawing.Color.White;
-            this.StopButton.Location = new System.Drawing.Point(221, 12);
+            this.StopButton.Location = new System.Drawing.Point(260, 12);
             this.StopButton.Name = "StopButton";
-            this.StopButton.Size = new System.Drawing.Size(200, 66);
+            this.StopButton.Size = new System.Drawing.Size(249, 66);
             this.StopButton.TabIndex = 2;
             this.StopButton.Text = "Stop";
             this.StopButton.UseVisualStyleBackColor = false;
@@ -117,7 +120,7 @@
             this.BillTextBox.Multiline = true;
             this.BillTextBox.Name = "BillTextBox";
             this.BillTextBox.ReadOnly = true;
-            this.BillTextBox.Size = new System.Drawing.Size(409, 504);
+            this.BillTextBox.Size = new System.Drawing.Size(497, 504);
             this.BillTextBox.TabIndex = 3;
             // 
             // LastScannedLabel

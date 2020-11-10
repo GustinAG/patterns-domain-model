@@ -2,6 +2,8 @@
 {
     public interface IPresenter
     {
-        void WarnLimitExceeded(decimal limit, decimal currentPrice);
+        void RefreshDisplay(BillAppearance appearance);
+        void ShowWarning(string message);
+        void ShowError(string message);
     }
 }

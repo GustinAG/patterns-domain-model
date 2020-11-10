@@ -40,9 +40,9 @@ namespace Checkout.AppService
 
         public Bill GetCurrentBill() => _outChecker.ShowBill();
 
-        public Product GetLastAdded() => _outChecker.ShowBill().LastAddedProduct;
-
         public bool CanStart => _outChecker.CanStart;
+        public bool CanScan => _outChecker.CanScan;
+        public bool CanCancel => _outChecker.CanCancel;
         public bool CanClose => _outChecker.CanClose;
     }
 }

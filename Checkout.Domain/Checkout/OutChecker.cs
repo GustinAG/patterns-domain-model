@@ -1,4 +1,5 @@
-﻿using Checkout.Domain.Discounts;
+﻿using System.Linq;
+using Checkout.Domain.Discounts;
 using Checkout.Domain.Products;
 using Dawn;
 
@@ -35,12 +36,14 @@ namespace Checkout.Domain.Checkout
             _state = ProcessState.InProgress;
         }
 
+        public bool CanScan => _state == ProcessState.InProgress;
+
         /// <summary>
         /// Scans the bar code of a product.
         /// </summary>
         public void Scan(BarCode barCode)
         {
-            Guard.Operation(_state == ProcessState.InProgress, $"You mustn't scan a bought product when checkout process {_state}");
+            Guard.Operation(CanScan, $"You mustn't scan a bought product when checkout process {_state}");
             var product = FindProductBy(barCode);
             if (product == Product.NoProduct) throw new InvalidBarCodeException(barCode);
 
@@ -49,13 +52,15 @@ namespace Checkout.Domain.Checkout
             CheckIfLimitExceeded();
         }
 
+        public bool CanCancel => _state == ProcessState.InProgress && _bill.GroupedBoughtProducts.Any();
+
         /// <summary>
         /// Cancels an already scanned product.
         /// </summary>
         /// <remarks>HU: "sztornóz".</remarks>
         public void Cancel(BarCode barCode)
         {
-            Guard.Operation(_state == ProcessState.InProgress, $"You can only cancel items when checkout process {ProcessState.InProgress}");
+            Guard.Operation(CanCancel, $"You can only cancel items when checkout process {ProcessState.InProgress} and any product already scanned");
             var product = FindProductBy(barCode);
             if (product == Product.NoProduct) throw new InvalidBarCodeException(barCode);
 

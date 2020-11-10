@@ -16,7 +16,10 @@ namespace Checkout.Presentation
             var builder = new ContainerBuilder();
 
             // Presentation:
+            builder.RegisterType<Invoker>().AsSelf();
             builder.RegisterType<StartCommand>().AsSelf();
+            builder.RegisterType<ScanCommand>().AsSelf();
+            builder.RegisterType<CancelCommand>().AsSelf();
             builder.RegisterType<StopCommand>().AsSelf();
 
             // Service:

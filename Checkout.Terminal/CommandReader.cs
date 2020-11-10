@@ -6,7 +6,7 @@ namespace Checkout.Terminal
     {
         public string ReadCommandCode()
         {
-            Console.Write($"Bar code - or '{CommandCode.Exit}' to close checkout / '{CommandCode.Show}' to show bill so far / '{CommandCode.Cancel} to cancel one item' / '{CommandCode.Limit}' to set up a total price limit: ");
+            Console.Write($"Bar code - or '{CommandCode.Exit}' to close checkout / '{CommandCode.Cancel} to cancel one item' / '{CommandCode.Limit}' to set up a total price limit: ");
             return Console.ReadLine();
         }
 
@@ -16,7 +16,7 @@ namespace Checkout.Terminal
             var numberAsText = Console.ReadLine();
             decimal number;
 
-            while (!Decimal.TryParse(numberAsText, out number))
+            while (!decimal.TryParse(numberAsText, out number))
             {
                 Console.Write("The text you entered isn't a valid number. Please try again: ");
                 numberAsText = Console.ReadLine();
