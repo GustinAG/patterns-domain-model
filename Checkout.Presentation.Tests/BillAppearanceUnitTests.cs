@@ -2,9 +2,11 @@ using System;
 using System.Globalization;
 using System.Linq;
 using Checkout.Domain.Checkout;
+using Checkout.Domain.Discounts;
 using Checkout.Domain.Products;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
 using static System.FormattableString;
 
 namespace Checkout.Presentation.Tests
@@ -12,28 +14,29 @@ namespace Checkout.Presentation.Tests
     [TestClass]
     public class BillAppearanceUnitTests
     {
+        private const string AppleName = "apple";
         private const string PearName = "pear";
         private const decimal ApplePrice = 0.3M;
         private const decimal PearPrice = 0.2M;
         private const decimal WalnutPrice = 0.4M;
 
-        private static readonly Product Apple = new Product("apple", ApplePrice);
+        private static readonly Product Apple = new Product(AppleName, ApplePrice);
         private static readonly Product Pear = new Product(PearName, PearPrice);
         private static readonly Product Walnut = new Product("walnut", WalnutPrice);
 
         [TestMethod]
-        public void AsText_ShouldContainSubtotalValueInLastLine()
+        public void AsText_ShouldContainTotalPriceInLastLine()
         {
             // Arrange
             var bill = CreateBillFromProducts(Apple, Pear);
             var appearance = new BillAppearance(bill);
-            var expectedSubtotalText = (ApplePrice + PearPrice).ToString(CultureInfo.InvariantCulture);
+            var expectedTotalPriceText = (ApplePrice + PearPrice).ToString(CultureInfo.InvariantCulture);
 
             // Act
             var text = appearance.AsText;
 
             // Assert
-            LastLineOf(text).Should().Contain(expectedSubtotalText);
+            LastLineOf(text).Should().Contain(expectedTotalPriceText);
         }
 
         [TestMethod]
@@ -64,6 +67,40 @@ namespace Checkout.Presentation.Tests
             // Assert
             Console.WriteLine(text);
             text.Should().Contain("TOTAL");
+        }
+
+        [TestMethod]
+        public void AsText_ShouldContainVolumeDiscount()
+        {
+            // Arrange
+            var bill = CreateVolumeBill();
+
+            // Act
+            var appearance = new BillAppearance(bill);
+
+            // Act
+            var text = appearance.AsText;
+
+            // Assert
+            Console.WriteLine(text);
+            text.Should().Contain($"{AppleName} volume discount");
+        }
+
+        [TestMethod]
+        public void AsText_ShouldContainVolumeDiscountUnderProduct()
+        {
+            // Arrange
+            var bill = CreateVolumeBill();
+
+            // Act
+            var appearance = new BillAppearance(bill);
+
+            // Act
+            var text = appearance.AsText;
+
+            // Assert
+            Console.WriteLine(text);
+            SecondLineOf(text).Should().Contain($"{AppleName} volume discount");
         }
 
         [TestMethod]
@@ -106,12 +143,28 @@ namespace Checkout.Presentation.Tests
             var text = appearance.LastAddedProductAsText;
 
             // Assert
+            Console.WriteLine(text);
             text.Should().Contain(PearName);
             text.Should().Contain(expectedPearPriceText);
         }
 
         private static Bill CreateBillFromProducts(params Product[] products) => products.Aggregate(Bill.EmptyBill, (b, p) => b.AddOne(p));
 
+        private static Bill CreateVolumeBill()
+        {
+            var apples = Enumerable.Repeat(Apple, 5);
+            var pears = Enumerable.Repeat(Pear, 5);
+            var products = apples.Concat(pears).ToArray();
+
+            var repository = Substitute.For<IProductRepository>();
+            repository.FindBy(Arg.Any<BarCode>()).Returns(Apple, Pear);
+            repository.FindBy(Arg.Any<string>()).Returns(Apple, Pear);
+
+            return CreateBillFromProducts(products).ApplyDiscounts(new Discounter(repository));
+        }
+
         private static string LastLineOf(string text) => text.Split(Environment.NewLine).Last();
+
+        private static string SecondLineOf(string text) => text.Split(Environment.NewLine).Skip(1).FirstOrDefault();
     }
 }
