@@ -157,8 +157,7 @@ namespace Checkout.Presentation.Tests
             var products = apples.Concat(pears).ToArray();
 
             var repository = Substitute.For<IProductRepository>();
-            repository.FindBy(Arg.Any<BarCode>()).Returns(Apple, Pear);
-            repository.FindBy(Arg.Any<string>()).Returns(Apple, Pear);
+            repository.FindBy(Arg.Any<string>()).Returns(Walnut);   // So that we don't get any combined discount here
 
             return CreateBillFromProducts(products).ApplyDiscounts(new Discounter(repository));
         }

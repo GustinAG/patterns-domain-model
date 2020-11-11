@@ -1,5 +1,4 @@
-﻿using Checkout.Presentation;
-using Checkout.Presentation.Commands;
+﻿using Checkout.Presentation.Commands;
 
 namespace Checkout.Terminal
 {

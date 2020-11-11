@@ -34,28 +34,27 @@ namespace Checkout.Presentation
         {
             get
             {
-                var productLines = _bill.GroupedBoughtProducts.Select(PrintableProductLine);
-                var discountLines = _bill.AppliedDiscounts.Select(d => ThreeColumnLine(string.Empty, d.Name, d.SubTotal));
-                var allLines = productLines.Union(discountLines).Append(DashedLine).Append(SummaryLine);
+                var productItems = _bill.GroupedBoughtProducts.Select(ProductLineItem);
+                var discountItems = _bill.AppliedDiscounts.Select(d => new BillLineItem(null, d.Name, d.SubTotal));
+                var detailedItems = productItems.Concat(discountItems).OrderBy(l => l.Description);
+                var allLines = detailedItems.Select(l => l.AsThreeColumnLine).Append(DashedLine).Append(SummaryLine);
 
                 return string.Join(Environment.NewLine, allLines);
             }
         }
 
-        private static string PrintableProductLine(KeyValuePair<Product, int> productLine)
+        private static BillLineItem ProductLineItem(KeyValuePair<Product, int> productLine)
         {
             var (product, count) = productLine;
             var unitPrice = product.Price;
-            return ThreeColumnLine(count, Invariant($"{product.Name} (unit price: € {unitPrice:f2})"), Invariant($"€ {count * unitPrice:f2}"));
+            return new BillLineItem(count, Invariant($"{product.Name} (unit price: {unitPrice.AsPriceText()})"), count * unitPrice);
         }
 
-        private string SummaryLine => ThreeColumnLine(string.Empty, "TOTAL      ", Invariant($"€ {_bill.TotalPrice:f2}"));
+        private string SummaryLine => new BillLineItem(null, "TOTAL      ", _bill.TotalPrice).AsThreeColumnLine;
 
         private static string LastAddedLine(Product product) =>
             product == Product.NoProduct
                 ? " -"
-                : ThreeColumnLine(product.Name, Invariant($"€ {product.Price:f2}"), string.Empty);
-
-        private static string ThreeColumnLine(object a, object b, object c) => $"{a,2} {b,40} {c,8}";
+                : new BillLineItem(null, product.Name, product.Price).AsThreeColumnLine;
     }
 }
