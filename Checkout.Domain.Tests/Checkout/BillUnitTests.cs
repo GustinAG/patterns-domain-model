@@ -7,7 +7,7 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 
-namespace Checkout.Domain.Tests
+namespace Checkout.Domain.Tests.Checkout
 {
     [TestClass]
     public class BillUnitTests

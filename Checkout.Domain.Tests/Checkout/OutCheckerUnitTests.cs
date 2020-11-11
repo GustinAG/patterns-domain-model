@@ -5,13 +5,14 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 
-namespace Checkout.Domain.Tests
+namespace Checkout.Domain.Tests.Checkout
 {
     [TestClass]
     public class OutCheckerUnitTests
     {
         private static readonly BarCode ValidBarCode = new BarCode("123");
         private static readonly BarCode InvalidBarCode = new BarCode("000");
+        private static readonly BarCode AdultBarCode = new BarCode("999");
 
         [TestMethod]
         public void Start_ShouldAllowScan()
@@ -81,6 +82,38 @@ namespace Checkout.Domain.Tests
             var bill = outChecker.ShowBill();
             Console.WriteLine(bill);
             bill.TotalPrice.Should().BeLessThan(bill.NoDiscountTotalPrice);
+        }
+
+        [TestMethod]
+        public void Scan_ShouldRaiseLimitExceededEvent()
+        {
+            // Arrange
+            var collector = Substitute.For<IDomainEventCollector>();
+            var outChecker = CreateOutChecker(collector);
+            outChecker.Start();
+            outChecker.SetUpLimit(new CheckoutLimit(1M));
+
+            // Act
+            outChecker.Scan(ValidBarCode);
+            outChecker.Scan(ValidBarCode);
+
+            // Assert
+            collector.Received().Raise(Arg.Any<CheckoutLimitExceeded>());
+        }
+
+        [TestMethod]
+        public void Scan_ShouldRaiseAdultProductAddedToBillEvent()
+        {
+            // Arrange
+            var collector = Substitute.For<IDomainEventCollector>();
+            var outChecker = CreateOutChecker(collector);
+            outChecker.Start();
+
+            // Act
+            outChecker.Scan(AdultBarCode);
+
+            // Assert
+            collector.Received().Raise(Arg.Any<AdultProductAddedToBill>());
         }
 
         [TestMethod]
@@ -176,9 +209,9 @@ namespace Checkout.Domain.Tests
             closeAction.Should().Throw<InvalidOperationException>("cannot close before before start");
         }
 
-        private static OutChecker CreateOutChecker()
+        private static OutChecker CreateOutChecker(IDomainEventCollector collector = null)
         {
-            var collector = Substitute.For<IDomainEventCollector>();
+            collector ??= Substitute.For<IDomainEventCollector>();
             var repository = CreateMockedProductRepository();
             return new OutChecker(repository, collector);
         }
@@ -189,6 +222,7 @@ namespace Checkout.Domain.Tests
 
             repository.FindBy(ValidBarCode).Returns(new Product("unit-test-product", 0.89M));
             repository.FindBy(InvalidBarCode).Returns(Product.NoProduct);
+            repository.FindBy(AdultBarCode).Returns(new Product("unit-test-adult-product", 1.33M, true));
             repository.FindBy(Arg.Any<string>()).Returns(Product.NoProduct);
 
             return repository;

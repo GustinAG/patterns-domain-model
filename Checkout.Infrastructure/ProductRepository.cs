@@ -24,7 +24,9 @@ namespace Checkout.Infrastructure
             new Product ("Cucumber", 0.25M),
             new Product ("Crescent", 0.2M),
             new Product ("Handkerchief", 0.98M),
-            new Product ("Pencil", 0.5M)
+            new Product ("Pencil", 0.5M),
+            new Product ("Beer", 0.48M, true),
+            new Product ("Wine", 2.39M, true),
         };
 
         [SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "Guard validates it here.")]
