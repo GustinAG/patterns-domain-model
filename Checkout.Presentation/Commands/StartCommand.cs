@@ -2,7 +2,7 @@
 using Checkout.Contracts;
 using Checkout.Domain.Checkout;
 
-namespace Checkout.Presentation
+namespace Checkout.Presentation.Commands
 {
     public sealed class StartCommand : ICommand
     {

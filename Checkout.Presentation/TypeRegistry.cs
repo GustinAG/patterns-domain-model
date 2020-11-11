@@ -6,6 +6,7 @@ using Checkout.Domain;
 using Checkout.Domain.Checkout;
 using Checkout.Domain.Products;
 using Checkout.Infrastructure;
+using Checkout.Presentation.Commands;
 
 namespace Checkout.Presentation
 {

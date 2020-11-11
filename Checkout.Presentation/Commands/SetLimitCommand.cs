@@ -1,6 +1,6 @@
 ﻿using Checkout.Contracts;
 
-namespace Checkout.Presentation
+namespace Checkout.Presentation.Commands
 {
     public class SetLimitCommand : ICommand
     {

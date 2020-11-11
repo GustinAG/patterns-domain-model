@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using Autofac;
 using Checkout.Domain.Checkout;
 using Checkout.Presentation;
+using Checkout.Presentation.Commands;
 using IContainer = Autofac.IContainer;
 
 namespace Checkout.Gui

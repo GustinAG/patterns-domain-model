@@ -1,4 +1,4 @@
-﻿namespace Checkout.Presentation
+﻿namespace Checkout.Presentation.Commands
 {
    public interface ICommand
     {
