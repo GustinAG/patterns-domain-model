@@ -23,6 +23,7 @@ namespace Checkout.Presentation
             builder.RegisterType<ScanCommand>().AsSelf();
             builder.RegisterType<CancelCommand>().AsSelf();
             builder.RegisterType<SetLimitCommand>().AsSelf();
+            builder.RegisterType<SetBirthDateCommand>().AsSelf();
             builder.RegisterType<StopCommand>().AsSelf();
 
             // Service:

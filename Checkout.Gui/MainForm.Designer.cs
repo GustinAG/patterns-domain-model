@@ -41,8 +41,12 @@
             this.SetLimitButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.LimitUpDown = new System.Windows.Forms.NumericUpDown();
+            this.SetBirthDateButton = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.BirthDateTimePicker = new System.Windows.Forms.DateTimePicker();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LimitUpDown)).BeginInit();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // BarCodeTextBox
@@ -196,11 +200,49 @@
             this.LimitUpDown.TabIndex = 0;
             this.LimitUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
+            // SetBirthDateButton
+            // 
+            this.SetBirthDateButton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
+            this.SetBirthDateButton.Enabled = false;
+            this.SetBirthDateButton.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.SetBirthDateButton.ForeColor = System.Drawing.Color.Black;
+            this.SetBirthDateButton.Location = new System.Drawing.Point(163, 16);
+            this.SetBirthDateButton.Name = "SetBirthDateButton";
+            this.SetBirthDateButton.Size = new System.Drawing.Size(184, 50);
+            this.SetBirthDateButton.TabIndex = 2;
+            this.SetBirthDateButton.Text = "Set";
+            this.SetBirthDateButton.UseVisualStyleBackColor = false;
+            this.SetBirthDateButton.Click += new System.EventHandler(this.SetBirthDateButton_Click);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.BirthDateTimePicker);
+            this.groupBox2.Controls.Add(this.SetBirthDateButton);
+            this.groupBox2.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.groupBox2.Location = new System.Drawing.Point(533, 12);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(362, 79);
+            this.groupBox2.TabIndex = 5;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Customer Birth Date";
+            // 
+            // BirthDateTimePicker
+            // 
+            this.BirthDateTimePicker.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.BirthDateTimePicker.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.BirthDateTimePicker.Location = new System.Drawing.Point(15, 31);
+            this.BirthDateTimePicker.MaxDate = new System.DateTime(2100, 12, 31, 0, 0, 0, 0);
+            this.BirthDateTimePicker.MinDate = new System.DateTime(1860, 1, 1, 0, 0, 0, 0);
+            this.BirthDateTimePicker.Name = "BirthDateTimePicker";
+            this.BirthDateTimePicker.Size = new System.Drawing.Size(142, 29);
+            this.BirthDateTimePicker.TabIndex = 3;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1075, 699);
+            this.ClientSize = new System.Drawing.Size(906, 699);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.MessageLabel);
             this.Controls.Add(this.LastScannedLabel);
@@ -217,6 +259,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LimitUpDown)).EndInit();
+            this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -235,6 +278,9 @@
         private System.Windows.Forms.NumericUpDown LimitUpDown;
         private System.Windows.Forms.Button SetLimitButton;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button SetBirthDateButton;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.DateTimePicker BirthDateTimePicker;
     }
 }
 

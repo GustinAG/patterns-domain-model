@@ -28,6 +28,7 @@ namespace Checkout.Gui
             EnableControlBasedOnCommand<CancelCommand>(CancelItemButton);
             EnableControlBasedOnCommand<SetLimitCommand>(LimitUpDown);
             EnableControlBasedOnCommand<SetLimitCommand>(SetLimitButton);
+            EnableControlBasedOnCommand<SetBirthDateCommand>(SetBirthDateButton);
             RefreshTexts(appearance);
         }
 
@@ -48,6 +49,8 @@ namespace Checkout.Gui
         private void CancelItemButton_Click(object sender, EventArgs e) => InvokeCommand<CancelCommand>(c => c.Code = BarCodeTextBox.Text);
 
         private void SetLimitButton_Click(object sender, EventArgs e) => InvokeCommand<SetLimitCommand>(c => c.Limit = LimitUpDown.Value);
+
+        private void SetBirthDateButton_Click(object sender, EventArgs e) => InvokeCommand<SetBirthDateCommand>(c => c.BirthDate = BirthDateTimePicker.Value);
 
         private void EnableControlBasedOnCommand<T>(Control control) where T : ICommand
         {
