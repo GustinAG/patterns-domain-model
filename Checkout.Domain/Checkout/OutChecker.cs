@@ -20,7 +20,7 @@ namespace Checkout.Domain.Checkout
         private ProcessState _state = ProcessState.NotStartedYet;
         private Bill _bill = Bill.NoBill;
         private CheckoutLimit _limit = CheckoutLimit.NoLimit;
-        private Customer _customer;
+        private Customer _customer = Customer.Unknown;
 
         public OutChecker(IProductRepository repository, IDomainEventCollector eventCollector)
         {
@@ -51,6 +51,8 @@ namespace Checkout.Domain.Checkout
             Guard.Operation(CanScan, $"You mustn't scan a bought product when checkout process {_state}");
             var product = FindProductBy(barCode);
             if (product == Product.NoProduct) throw new InvalidBarCodeException(barCode);
+
+            CheckIfCustomerAllowedToBuy(product);
 
             _bill = _bill.AddOne(product);
             _bill = _bill.ApplyDiscounts(_discounter);
@@ -100,6 +102,12 @@ namespace Checkout.Domain.Checkout
         private void CheckIfLimitExceeded()
         {
             if (_limit.IsExceededBy(_bill.NoDiscountTotalPrice)) _eventCollector.Raise(new CheckoutLimitExceeded(_limit, _bill.TotalPrice));
+        }
+
+        private void CheckIfCustomerAllowedToBuy(Product product)
+        {
+            if (!product.IsAdult) return;
+            if (!_customer.IsAdult) throw new AdultProductBuyingNotAllowedException(_customer, product);
         }
 
         private void CheckIfAdultProduct(Product product)

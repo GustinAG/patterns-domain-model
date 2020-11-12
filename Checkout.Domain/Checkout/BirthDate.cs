@@ -7,10 +7,14 @@ namespace Checkout.Domain.Checkout
     {
         private readonly DateTime _date;
 
-        internal BirthDate(DateTime date)
+        public BirthDate(DateTime date)
         {
             _date = date;
         }
+
+        public static BirthDate Unknown { get; } = new BirthDate(DateTime.MinValue);
+
+        public int CurrentAge => _date.GetAge();
 
         protected override IList<object> EqualityComponents => new List<object> { _date };
     }

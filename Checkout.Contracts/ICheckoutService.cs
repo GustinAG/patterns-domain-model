@@ -16,6 +16,6 @@ namespace Checkout.Contracts
         bool CanClose { get; }
         bool CanCancel { get; }
         bool CanSetUpLimit { get; }
-        void SetCustomerBirthDate(DateTime dateTime);
+        void SetCustomerBirthDate(DateTime birthDate);
     }
 }

@@ -23,7 +23,7 @@ namespace Checkout.Presentation.Commands
                 RefreshDisplay();
             }
             catch (Exception e)
-                when (e is InvalidBarCodeException || e is BoughtProductNotFoundException)
+                when (e is InvalidBarCodeException || e is BoughtProductNotFoundException || e is AdultProductBuyingNotAllowedException)
             {
                 _presenter.ShowError(e.Message);
             }

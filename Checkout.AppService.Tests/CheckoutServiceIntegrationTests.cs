@@ -168,6 +168,7 @@ namespace Checkout.AppService.Tests
             var presenter = Substitute.For<IWarningPresenter>();
             var service = CreateService(false, presenter);
             service.Start();
+            service.SetCustomerBirthDate(DateTime.Today.AddYears(-20));
 
             // Act
             service.Scan(BeerCode);

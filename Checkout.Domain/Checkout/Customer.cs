@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Checkout.Domain.Checkout
 {
@@ -11,6 +10,10 @@ namespace Checkout.Domain.Checkout
         {
             _birthDate = birthDate;
         }
+
+        public static Customer Unknown { get; } = new Customer(BirthDate.Unknown);
+
+        public bool IsAdult => this != Unknown && _birthDate.CurrentAge >= 18;
 
         protected override IList<object> EqualityComponents => new List<object> { _birthDate };
     }

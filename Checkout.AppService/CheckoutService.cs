@@ -58,8 +58,7 @@ namespace Checkout.AppService
         public bool CanSetUpLimit => _outChecker.CanSetUpLimit;
         public bool CanClose => _outChecker.CanClose;
 
-        public void SetCustomerBirthDate(DateTime dateTime)
-        { }
+        public void SetCustomerBirthDate(DateTime birthDate) => _outChecker.SetCustomerBirthDate(new BirthDate(birthDate));
 
         private void WarnLimitExceeded(CheckoutLimitExceeded e) =>
             _presenter.ShowWarning(Invariant($"Warning: Your limit has been exceeded (limit: € {e.Limit}, current price: € {e.Price})"));

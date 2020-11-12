@@ -69,7 +69,7 @@ namespace Checkout.Domain.Tests.Checkout
         {
             // Arrange
             var outChecker = CreateOutChecker();
-            Action scanAction = () => outChecker.Scan(ValidBarCode);
+            Action scanAction = () => outChecker.Scan(AdultBarCode);
             outChecker.Start();
 
             // Act & Assert
@@ -81,14 +81,14 @@ namespace Checkout.Domain.Tests.Checkout
         {
             // Arrange
             var outChecker = CreateOutChecker();
-            Action scanAction = () => outChecker.Scan(ValidBarCode);
+            Action scanAction = () => outChecker.Scan(AdultBarCode);
             outChecker.Start();
 
             var birthDate = DateTime.Now.AddYears(-10);
             outChecker.SetCustomerBirthDate(new BirthDate(birthDate));
 
             // Act & Assert
-            scanAction.Should().Throw<AdultProductBuyingNotAllowedException>("customer not validated yet");
+            scanAction.Should().Throw<AdultProductBuyingNotAllowedException>("customer too young");
         }
 
         [TestMethod]
@@ -135,6 +135,7 @@ namespace Checkout.Domain.Tests.Checkout
             var collector = Substitute.For<IDomainEventCollector>();
             var outChecker = CreateOutChecker(collector);
             outChecker.Start();
+            outChecker.SetCustomerBirthDate(new BirthDate(DateTime.Now.AddYears(-20)));
 
             // Act
             outChecker.Scan(AdultBarCode);
