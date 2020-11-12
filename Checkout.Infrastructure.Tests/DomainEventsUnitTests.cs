@@ -1,6 +1,7 @@
 ﻿using System;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using static System.FormattableString;
 
 namespace Checkout.Infrastructure.Tests
 {
@@ -88,13 +89,13 @@ namespace Checkout.Infrastructure.Tests
 
         private void HandleTenantAdded(OneUnitTestEventOccurred testEvent)
         {
-            Console.WriteLine(FormattableString.Invariant($"One unit test event #{testEvent.Id} occured - event received."));
+            Console.WriteLine(Invariant($"One unit test event #{testEvent.Id} occured - event received."));
             _oneCounter++;
         }
 
         private void HandleTenantDeleted(AnotherUnitTestEventOccurred testEvent)
         {
-            Console.WriteLine(FormattableString.Invariant($"Another unit test event #{testEvent.Id} occured - event received."));
+            Console.WriteLine(Invariant($"Another unit test event #{testEvent.Id} occured - event received."));
             _anotherCounter++;
         }
     }

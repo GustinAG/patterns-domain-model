@@ -1,5 +1,6 @@
 ﻿using System;
 using Autofac;
+using Checkout.Contracts;
 using Checkout.Presentation;
 
 namespace Checkout.Terminal
@@ -12,7 +13,7 @@ namespace Checkout.Terminal
 
         private static void RegisterTerminalTypes(ContainerBuilder builder, Action<ContainerBuilder> additionalRegistrationsAction)
         {
-            builder.RegisterType<BillPresenter>().AsSelf().As<IPresenter>();
+            builder.RegisterType<BillPresenter>().AsSelf().As<IPresenter>().As<IWarningPresenter>();
             builder.RegisterType<CommandReader>().As<ICommandReader>();
             builder.RegisterType<CommandProcessor>().AsSelf();
             builder.RegisterType<MainProcess>().AsSelf();

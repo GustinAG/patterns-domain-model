@@ -1,11 +1,10 @@
-﻿using System;
-using Checkout.Domain.Checkout;
+﻿using Checkout.Domain.Checkout;
 
 namespace Checkout.Contracts
 {
     public interface ICheckoutService
     {
-        void Start(Action<CheckoutLimitExceeded> limitExceededAction = null);
+        void Start();
         void Scan(string code);
         void Cancel(string code);
         void Close();

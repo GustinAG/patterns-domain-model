@@ -1,9 +1,9 @@
-﻿using System;
-using Checkout.Contracts;
+﻿using Checkout.Contracts;
 using Checkout.Domain.Checkout;
 using Checkout.Domain.Products;
 using Checkout.Infrastructure;
 using Dawn;
+using static System.FormattableString;
 
 namespace Checkout.AppService
 {
@@ -11,17 +11,20 @@ namespace Checkout.AppService
     {
         private readonly IDomainEventRegistry _eventRegistry;
         private readonly OutChecker _outChecker;
+        private readonly IWarningPresenter _presenter;
 
-        public CheckoutService(IDomainEventRegistry eventRegistry, OutChecker outChecker)
+        public CheckoutService(IDomainEventRegistry eventRegistry, OutChecker outChecker, IWarningPresenter presenter)
         {
             Guard.Operation(outChecker != null);
             _eventRegistry = eventRegistry;
             _outChecker = outChecker;
+            _presenter = presenter;
         }
 
-        public void Start(Action<CheckoutLimitExceeded> limitExceededAction = null)
+        public void Start()
         {
-            if (limitExceededAction != null) _eventRegistry.Register(limitExceededAction);
+            _eventRegistry.Register<CheckoutLimitExceeded>(WarnLimitExceeded);
+            _eventRegistry.Register<AdultProductAddedToBill>(WarnAdultProduct);
             _outChecker.Start();
         }
 
@@ -53,5 +56,10 @@ namespace Checkout.AppService
         public bool CanCancel => _outChecker.CanCancel;
         public bool CanSetUpLimit => _outChecker.CanSetUpLimit;
         public bool CanClose => _outChecker.CanClose;
+
+        private void WarnLimitExceeded(CheckoutLimitExceeded e) =>
+            _presenter.ShowWarning(Invariant($"Warning: Your limit has been exceeded (limit: € {e.Limit}, current price: € {e.Price})"));
+
+        private void WarnAdultProduct(AdultProductAddedToBill e) => _presenter.ShowWarning(Invariant($"Warning: ADULT PRODUCT {e.Product.Name} added to bill !!!"));
     }
 }

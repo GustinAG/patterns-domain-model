@@ -1,9 +1,10 @@
-﻿namespace Checkout.Presentation
+﻿using Checkout.Contracts;
+
+namespace Checkout.Presentation
 {
-    public interface IPresenter
+    public interface IPresenter : IWarningPresenter
     {
         void RefreshDisplay(BillAppearance appearance);
-        void ShowWarning(string message);
         void ShowError(string message);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Checkout.Contracts;
 using Checkout.Domain.Checkout;
 using Checkout.Domain.Products;
 using Checkout.Infrastructure;
@@ -14,12 +15,10 @@ namespace Checkout.AppService.Tests
         private const string TestProductName = "Test Product";
         private const string ValidCode = "1234";
         private const string InvalidCode = "000";
+        private const string BeerCode = "12";
         private const decimal Limit = 1M;
 
         private static readonly Product TestProduct = new Product(TestProductName, 0.98M);
-
-        private int _limitExceededCount;
-        private decimal _exceededLimit;
 
         [TestMethod]
         public void Start_ShouldProduceEmptyBill()
@@ -112,11 +111,12 @@ namespace Checkout.AppService.Tests
         }
 
         [TestMethod]
-        public void Scan_ShouldCallLimitExceededActionWithPresetLimit()
+        public void Scan_ShouldWarn_WhenLimitExceeded()
         {
             // Arrange
-            var service = CreateService();
-            service.Start(TrackLimitExceededCalls);
+            var presenter = Substitute.For<IWarningPresenter>();
+            var service = CreateService(true, presenter);
+            service.Start();
             service.SetUpLimit(Limit);
 
             // Act
@@ -124,31 +124,32 @@ namespace Checkout.AppService.Tests
             service.Scan(ValidCode);
 
             // Assert
-            _limitExceededCount.Should().Be(1);
-            _exceededLimit.Should().Be(Limit);
+            presenter.Received(1).ShowWarning(Arg.Any<string>());
         }
 
         [TestMethod]
-        public void Scan_ShouldNotCallLimitExceededAction_WhenUnderPresetLimit()
+        public void Scan_ShouldNotWarn_WhenLimitNotExceeded()
         {
             // Arrange
-            var service = CreateService();
-            service.Start(TrackLimitExceededCalls);
+            var presenter = Substitute.For<IWarningPresenter>();
+            var service = CreateService(true, presenter);
+            service.Start();
             service.SetUpLimit(Limit);
 
             // Act
             service.Scan(ValidCode);
 
             // Assert
-            _limitExceededCount.Should().Be(0);
+            presenter.DidNotReceive().ShowWarning(Arg.Any<string>());
         }
 
         [TestMethod]
-        public void Scan_ShouldCallLimitExceededActionTwice_WhenOccursTwice()
+        public void Scan_ShouldWarnTwice_WhenLimitExceededTwice()
         {
             // Arrange
-            var service = CreateService();
-            service.Start(TrackLimitExceededCalls);
+            var presenter = Substitute.For<IWarningPresenter>();
+            var service = CreateService(true, presenter);
+            service.Start();
             service.SetUpLimit(Limit);
 
             // Act
@@ -157,15 +158,30 @@ namespace Checkout.AppService.Tests
             service.Scan(ValidCode);
 
             // Assert
-            _limitExceededCount.Should().Be(2);
-            _exceededLimit.Should().Be(Limit);
+            presenter.Received(2).ShowWarning(Arg.Any<string>());
         }
 
-        private static CheckoutService CreateService(bool mockRepository = true)
+        [TestMethod]
+        public void Scan_ShouldWarn_WhenAdultProduct()
+        {
+            // Arrange
+            var presenter = Substitute.For<IWarningPresenter>();
+            var service = CreateService(false, presenter);
+            service.Start();
+
+            // Act
+            service.Scan(BeerCode);
+
+            // Assert
+            presenter.Received(1).ShowWarning(Arg.Any<string>());
+        }
+
+        private static CheckoutService CreateService(bool mockRepository = true, IWarningPresenter presenter = null)
         {
             var events = new DomainEvents();
             var repository = mockRepository ? CreateMockedRepository() : new ProductRepository();
-            return new CheckoutService(events, new OutChecker(repository, events));
+            presenter ??= Substitute.For<IWarningPresenter>();
+            return new CheckoutService(events, new OutChecker(repository, events), presenter);
         }
 
         private static IProductRepository CreateMockedRepository()
@@ -176,12 +192,6 @@ namespace Checkout.AppService.Tests
             repository.FindBy(Arg.Any<string>()).Returns(Product.NoProduct);
 
             return repository;
-        }
-
-        private void TrackLimitExceededCalls(CheckoutLimitExceeded e)
-        {
-            _limitExceededCount++;
-            _exceededLimit = e.Limit.Limit;
         }
     }
 }

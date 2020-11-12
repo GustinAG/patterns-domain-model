@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using Autofac;
+using Checkout.Contracts;
 using Checkout.Domain.Checkout;
 using Checkout.Presentation;
 using Checkout.Presentation.Commands;
@@ -34,7 +35,7 @@ namespace Checkout.Gui
 
         public void ShowError(string message) => MessageLabel.Text = message;
 
-        private void RegisterThis(ContainerBuilder builder) => builder.RegisterInstance(this).As<IPresenter>();
+        private void RegisterThis(ContainerBuilder builder) => builder.RegisterInstance(this).As<IPresenter>().As<IWarningPresenter>();
 
         private void MainForm_Load(object sender, EventArgs e) => RefreshDisplay(new BillAppearance(Bill.NoBill));
 
