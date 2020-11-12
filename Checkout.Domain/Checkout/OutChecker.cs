@@ -55,6 +55,7 @@ namespace Checkout.Domain.Checkout
             _bill = _bill.ApplyDiscounts(_discounter);
 
             CheckIfLimitExceeded();
+            CheckIfAdultProduct(product);
         }
 
         public bool CanCancel => _state == ProcessState.InProgress && _bill.GroupedBoughtProducts.Any();
@@ -96,6 +97,11 @@ namespace Checkout.Domain.Checkout
         private void CheckIfLimitExceeded()
         {
             if (_limit.IsExceededBy(_bill.NoDiscountTotalPrice)) _eventCollector.Raise(new CheckoutLimitExceeded(_limit, _bill.TotalPrice));
+        }
+
+        private void CheckIfAdultProduct(Product product)
+        {
+            if (product.IsAdult) _eventCollector.Raise(new AdultProductAddedToBill(product));
         }
 
         private Product FindProductBy(BarCode barCode)

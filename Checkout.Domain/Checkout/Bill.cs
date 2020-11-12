@@ -38,6 +38,6 @@ namespace Checkout.Domain.Checkout
             return new Bill(_boughtProducts, discounts.ToList());
         }
 
-        protected override IList<object> EqualityComponents => new List<object> { _boughtProducts };
+        protected override IList<object> EqualityComponents => new List<object> { _boughtProducts, AppliedDiscounts };
     }
 }
