@@ -1,4 +1,5 @@
-﻿using Checkout.Contracts;
+﻿using System;
+using Checkout.Contracts;
 using Checkout.Domain.Checkout;
 using Checkout.Domain.Products;
 using Checkout.Infrastructure;
@@ -56,6 +57,9 @@ namespace Checkout.AppService
         public bool CanCancel => _outChecker.CanCancel;
         public bool CanSetUpLimit => _outChecker.CanSetUpLimit;
         public bool CanClose => _outChecker.CanClose;
+
+        public void SetCustomerBirthDate(DateTime dateTime)
+        { }
 
         private void WarnLimitExceeded(CheckoutLimitExceeded e) =>
             _presenter.ShowWarning(Invariant($"Warning: Your limit has been exceeded (limit: € {e.Limit}, current price: € {e.Price})"));

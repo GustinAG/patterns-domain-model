@@ -6,7 +6,7 @@ namespace Checkout.Presentation.Commands
     {
         private readonly ICheckoutService _service;
 
-        public StartCommand(IPresenter presenter, ICheckoutService service)
+        public StartCommand(ICheckoutService service)
         {
             _service = service;
         }

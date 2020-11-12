@@ -20,6 +20,7 @@ namespace Checkout.Domain.Checkout
         private ProcessState _state = ProcessState.NotStartedYet;
         private Bill _bill = Bill.NoBill;
         private CheckoutLimit _limit = CheckoutLimit.NoLimit;
+        private Customer _customer;
 
         public OutChecker(IProductRepository repository, IDomainEventCollector eventCollector)
         {
@@ -93,6 +94,8 @@ namespace Checkout.Domain.Checkout
         }
 
         public Bill ShowBill() => _bill;
+
+        public void SetCustomerBirthDate(BirthDate date) => _customer = new Customer(date);
 
         private void CheckIfLimitExceeded()
         {

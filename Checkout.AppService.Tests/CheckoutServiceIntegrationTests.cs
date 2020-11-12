@@ -176,7 +176,35 @@ namespace Checkout.AppService.Tests
             presenter.Received(1).ShowWarning(Arg.Any<string>());
         }
 
-        private static CheckoutService CreateService(bool mockRepository = true, IWarningPresenter presenter = null)
+        [TestMethod]
+        public void Scan_ShouldThrowException_WhenUnknownCustomerBuyingAdultProduct()
+        {
+            // Arrange
+            var service = CreateService(false);
+            Action scanAction = () => service.Scan(BeerCode);
+            service.Start();
+
+            // Act & Assert
+            scanAction.Should().Throw<AdultProductBuyingNotAllowedException>();
+        }
+
+        [TestMethod]
+        public void Scan_ShouldAddAdultProductToBill_WhenAdultCustomer()
+        {
+            // Arrange
+            var service = CreateService(false);
+            service.Start();
+            service.SetCustomerBirthDate(new DateTime(2000, 1, 1));
+
+            // Act
+            service.Scan(BeerCode);
+
+            // Assert
+            var bill = service.GetCurrentBill();
+            bill.TotalPrice.Should().BePositive();
+        }
+
+        private static ICheckoutService CreateService(bool mockRepository = true, IWarningPresenter presenter = null)
         {
             var events = new DomainEvents();
             var repository = mockRepository ? CreateMockedRepository() : new ProductRepository();

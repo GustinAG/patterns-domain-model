@@ -1,4 +1,5 @@
-﻿using Checkout.Domain.Checkout;
+﻿using System;
+using Checkout.Domain.Checkout;
 
 namespace Checkout.Contracts
 {
@@ -15,5 +16,6 @@ namespace Checkout.Contracts
         bool CanClose { get; }
         bool CanCancel { get; }
         bool CanSetUpLimit { get; }
+        void SetCustomerBirthDate(DateTime dateTime);
     }
 }

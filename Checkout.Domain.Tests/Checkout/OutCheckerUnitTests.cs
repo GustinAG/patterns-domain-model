@@ -65,6 +65,33 @@ namespace Checkout.Domain.Tests.Checkout
         }
 
         [TestMethod]
+        public void Scan_ShouldThrowException_WhenUnknownCustomerBuyingAdultProduct()
+        {
+            // Arrange
+            var outChecker = CreateOutChecker();
+            Action scanAction = () => outChecker.Scan(ValidBarCode);
+            outChecker.Start();
+
+            // Act & Assert
+            scanAction.Should().Throw<AdultProductBuyingNotAllowedException>("customer not validated yet");
+        }
+
+        [TestMethod]
+        public void Scan_ShouldThrowException_WhenChildCustomerBuyingAdultProduct()
+        {
+            // Arrange
+            var outChecker = CreateOutChecker();
+            Action scanAction = () => outChecker.Scan(ValidBarCode);
+            outChecker.Start();
+
+            var birthDate = DateTime.Now.AddYears(-10);
+            outChecker.SetCustomerBirthDate(new BirthDate(birthDate));
+
+            // Act & Assert
+            scanAction.Should().Throw<AdultProductBuyingNotAllowedException>("customer not validated yet");
+        }
+
+        [TestMethod]
         public void Scan_ShouldProduceLowerTotalPrice_WhenDiscountApplies()
         {
             // Arrange
