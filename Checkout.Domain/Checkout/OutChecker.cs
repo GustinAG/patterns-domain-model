@@ -101,7 +101,7 @@ namespace Checkout.Domain.Checkout
 
         private void CheckIfLimitExceeded()
         {
-            if (_limit.IsExceededBy(_bill.NoDiscountTotalPrice)) _eventCollector.Raise(new CheckoutLimitExceeded(_limit, _bill.TotalPrice));
+            if (_limit.IsExceededBy(_bill.TotalPrice)) _eventCollector.Raise(new CheckoutLimitExceeded(_limit, _bill.TotalPrice));
         }
 
         private void CheckIfCustomerAllowedToBuy(Product product)
